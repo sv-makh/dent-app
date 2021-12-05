@@ -21,7 +21,6 @@ class FetchHelper {
       return jsonDecode(response.body);
     }
     else {
-      print("from inside fetch getData");
       print(response.statusCode);
     }
   }

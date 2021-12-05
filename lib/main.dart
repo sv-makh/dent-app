@@ -5,7 +5,99 @@ import 'package:flutter/material.dart';
 import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
 
-void main() => runApp(MaterialApp(
+var typeProtListRu = <String>[];
+var typeFixListRu = <String>[];
+var typeBoneListRu = <String>[];
+var classResorpListRu = <String>[];
+var angleListRu = <String>[];
+
+var typeProtListEng = <String>[];
+var typeFixListEng = <String>[];
+var typeBoneListEng = <String>[];
+var classResorpListEng = <String>[];
+var angleListEng = <String>[];
+
+DataFetch _dataFetch = DataFetch();
+
+var parameters = [
+  "type_prot",
+  "type_fix",
+  "type_bone",
+  "class_resorp",
+  "angle"
+];
+
+_getData(name) async {
+  try {
+    var dataDecoded = await _dataFetch.getData(name);
+    updateData(dataDecoded, name);
+  } catch (e) {
+    debugPrint(e.toString());
+  }
+}
+
+void updateData(data, name) {
+  if (data != null) {
+    debugPrint(jsonEncode(data));
+
+    switch (name) {
+      case "type_prot":
+        {
+          for (int i = 0; i < 2; i++) {
+            typeProtListRu.add(data["values"][i]["ru"].toString());
+            typeProtListEng.add(data["values"][i]["eng"].toString());
+          }
+        }
+        break;
+
+      case "type_fix":
+        {
+          for (int i = 0; i < 2; i++) {
+            typeFixListRu.add(data["values"][i]["ru"].toString());
+            typeFixListEng.add(data["values"][i]["eng"].toString());
+          }
+        }
+        break;
+
+      case "type_bone":
+        {
+          for (int i = 0; i < 4; i++) {
+            typeBoneListRu.add(data["values"][i]["ru"].toString());
+            typeBoneListEng.add(data["values"][i]["eng"].toString());
+          }
+        }
+        break;
+
+      case "class_resorp":
+        {
+          for (int i = 0; i < 4; i++) {
+            classResorpListRu.add(data["values"][i]["ru"].toString());
+            classResorpListEng.add(data["values"][i]["eng"].toString());
+          }
+        }
+        break;
+
+      case "angle":
+        {
+          for (int i = 0; i < 2; i++) {
+            angleListRu.add(data["values"][i]["ru"].toString());
+            angleListEng.add(data["values"][i]["eng"].toString());
+          }
+        }
+        break;
+    }
+  }
+}
+
+Future _getParameters() async {
+  for (var p in parameters) {
+    await _getData(p);
+  }
+}
+
+void main() {
+  _getParameters().then((_) {
+    runApp(MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text("Стоматология 🦷"), centerTitle: true),
         body: MyForm(),
@@ -50,6 +142,8 @@ void main() => runApp(MaterialApp(
         ),
       ),
     ));
+  });
+}
 
 class MyForm extends StatefulWidget {
   @override
@@ -67,87 +161,6 @@ class MyFormState extends State {
   String typeBone = "рыхлая"; // Тип кости / Bone type
   String classResorp = "A"; //Класс резорбции / Resorption class
   String angle = "starthet"; //Угол вкручивания / Screw angle
-
-  var typeProtListRu = <String>[];
-  var typeFixListRu = <String>[];
-  var typeBoneListRu = <String>[];
-  var classResorpListRu = <String>[];
-  var angleListRu = <String>[];
-
-  var typeProtListEng = <String>[];
-  var typeFixListEng = <String>[];
-  var typeBoneListEng = <String>[];
-  var classResorpListEng = <String>[];
-  var angleListEng = <String>[];
-
-  DataFetch _dataFetch = DataFetch();
-
-  var parameters = ["type_prot", "type_fix", "type_bone", "class_resorp", "angle"];
-
-  _getData(name) async {
-    try {
-      var dataDecoded = await _dataFetch.getData(name);
-      updateData(dataDecoded, name);
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  void updateData(data, name) {
-    if (data != null) {
-      debugPrint(jsonEncode(data));
-
-      switch(name) {
-        case "type_prot": {
-          for (int i = 0; i < 2; i++) {
-            typeProtListRu.add(data["values"][i]["ru"].toString());
-            typeProtListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
-
-        case "type_fix": {
-          for (int i = 0; i < 2; i++) {
-            typeFixListRu.add(data["values"][i]["ru"].toString());
-            typeFixListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
-
-        case "type_bone": {
-          for (int i = 0; i < 4; i++) {
-            typeBoneListRu.add(data["values"][i]["ru"].toString());
-            typeBoneListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
-
-        case "class_resorp": {
-          for (int i = 0; i < 4; i++) {
-            classResorpListRu.add(data["values"][i]["ru"].toString());
-            classResorpListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
-
-        case "angle": {
-          for (int i = 0; i < 2; i++) {
-            angleListRu.add(data["values"][i]["ru"].toString());
-            angleListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    for (var p in parameters) {
-      _getData(p);
-    }
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
