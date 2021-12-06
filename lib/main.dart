@@ -40,51 +40,31 @@ void updateData(data, name) {
   if (data != null) {
     debugPrint(jsonEncode(data));
 
-    switch (name) {
-      case "type_prot":
-        {
-          for (int i = 0; i < 2; i++) {
-            typeProtListRu.add(data["values"][i]["ru"].toString());
-            typeProtListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
+    int length = data["values"].length;
 
-      case "type_fix":
-        {
-          for (int i = 0; i < 2; i++) {
-            typeFixListRu.add(data["values"][i]["ru"].toString());
-            typeFixListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
+    for (int i = 0; i < length; i++) {
 
-      case "type_bone":
-        {
-          for (int i = 0; i < 4; i++) {
-            typeBoneListRu.add(data["values"][i]["ru"].toString());
-            typeBoneListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
+      if (name == parameters[0]) { //"type_prot"
+        typeProtListRu.add(data["values"][i]["ru"].toString());
+        typeProtListEng.add(data["values"][i]["eng"].toString());
+      }
+      else if (name == parameters[1]) { //"type_fix"
+        typeFixListRu.add(data["values"][i]["ru"].toString());
+        typeFixListEng.add(data["values"][i]["eng"].toString());
+      }
+      else if (name == parameters[2]) { //"type_bone"
+        typeBoneListRu.add(data["values"][i]["ru"].toString());
+        typeBoneListEng.add(data["values"][i]["eng"].toString());
+      }
+      else if (name == parameters[3]) { //"class_resorp"
+        classResorpListRu.add(data["values"][i]["ru"].toString());
+        classResorpListEng.add(data["values"][i]["eng"].toString());
+      }
+      else if (name == parameters[4]) { //"angle"
+        angleListRu.add(data["values"][i]["ru"].toString());
+        angleListEng.add(data["values"][i]["eng"].toString());
+      }
 
-      case "class_resorp":
-        {
-          for (int i = 0; i < 4; i++) {
-            classResorpListRu.add(data["values"][i]["ru"].toString());
-            classResorpListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
-
-      case "angle":
-        {
-          for (int i = 0; i < 2; i++) {
-            angleListRu.add(data["values"][i]["ru"].toString());
-            angleListEng.add(data["values"][i]["eng"].toString());
-          }
-        }
-        break;
     }
   }
 }
@@ -153,14 +133,14 @@ class MyForm extends StatefulWidget {
 class MyFormState extends State {
   final _formKey = GlobalKey<FormState>();
 
-  String typeProt = typeProtListRu[0]; //Тип протезирования / Prosthetics type
+  String typeProt = typeProtListEng[0]; //Тип протезирования / Prosthetics type
   int isq =
   65; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
   int force = 25; //Динамометрическое усилие, н/см2 / Torque force, N/cm2
-  String typeFix = typeFixListRu[0]; // Тип фиксации / Fixation type
-  String typeBone = typeBoneListRu[0]; // Тип кости / Bone type
-  String classResorp = classResorpListRu[0]; //Класс резорбции / Resorption class
-  String angle = angleListRu[0]; //Угол вкручивания / Screw angle
+  String typeFix = typeFixListEng[0]; // Тип фиксации / Fixation type
+  String typeBone = typeBoneListEng[0]; // Тип кости / Bone type
+  String classResorp = classResorpListEng[0]; //Класс резорбции / Resorption class
+  String angle = angleListEng[0]; //Угол вкручивания / Screw angle
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +167,7 @@ class MyFormState extends State {
                         typeProt = newValue!;
                       });
                     },
-                    items: typeProtListRu.map((String value) {
+                    items: typeProtListEng.map((String value) {
                       return DropdownMenuItem(
                         value: value,
                         child: Text(value),
@@ -236,7 +216,7 @@ class MyFormState extends State {
                         typeFix = newValue!;
                       });
                     },
-                    items: typeFixListRu.map((String value) {
+                    items: typeFixListEng.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -259,7 +239,7 @@ class MyFormState extends State {
                         typeBone = newValue!;
                       });
                     },
-                    items: typeBoneListRu.map((String value) {
+                    items: typeBoneListEng.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -282,7 +262,7 @@ class MyFormState extends State {
                         classResorp = newValue!;
                       });
                     },
-                    items: classResorpListRu.map((String value) {
+                    items: classResorpListEng.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -305,7 +285,7 @@ class MyFormState extends State {
                         angle = newValue!;
                       });
                     },
-                    items: angleListRu.map((String value) {
+                    items: angleListEng.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
