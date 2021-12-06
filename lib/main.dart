@@ -95,20 +95,21 @@ Future _getParameters() async {
   }
 }
 
-void main() {
-  _getParameters().then((_) {
-    runApp(MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text("Стоматология 🦷"), centerTitle: true),
-        body: MyForm(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: ElevatedButton(
-          child: const Text("Рассчитать"),
-          onPressed: () {
-            String message = "Данные успешно сохранены";
-            Color messageColor = Colors.green;
+void main() async {
+  await _getParameters();
 
-            /*if (!_formKey.currentState!.validate() ||
+  runApp(MaterialApp(
+    home: Scaffold(
+      appBar: AppBar(title: const Text("Стоматология 🦷"), centerTitle: true),
+      body: MyForm(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: ElevatedButton(
+        child: const Text("Рассчитать"),
+        onPressed: () {
+          String message = "Данные успешно сохранены";
+          Color messageColor = Colors.green;
+
+          /*if (!_formKey.currentState!.validate() ||
                       !_feedDry && !_feedWet && !_feedNatural) {
                     message = "Данные неполны";
                     messageColor = Colors.red;
@@ -124,25 +125,24 @@ void main() {
                       ),
                     ));
                   } else */
-            {
-              /*Navigator.push(
+          {
+            /*Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ResultingRoute()),
               );*/
-            }
-          },
-        ),
-        bottomNavigationBar: BottomAppBar(
-          shape: CircularNotchedRectangle(),
-          notchMargin: 4.0,
-          child: new Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          ),
+          }
+        },
+      ),
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        notchMargin: 4.0,
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
         ),
       ),
-    ));
-  });
+    ),
+  ));
 }
 
 class MyForm extends StatefulWidget {
@@ -153,14 +153,14 @@ class MyForm extends StatefulWidget {
 class MyFormState extends State {
   final _formKey = GlobalKey<FormState>();
 
-  String typeProt = "одиночное"; //Тип протезирования / Prosthetics type
+  String typeProt = typeProtListRu[0]; //Тип протезирования / Prosthetics type
   int isq =
-      65; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
+  65; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
   int force = 25; //Динамометрическое усилие, н/см2 / Torque force, N/cm2
-  String typeFix = "стандартная"; // Тип фиксации / Fixation type
-  String typeBone = "рыхлая"; // Тип кости / Bone type
-  String classResorp = "A"; //Класс резорбции / Resorption class
-  String angle = "starthet"; //Угол вкручивания / Screw angle
+  String typeFix = typeFixListRu[0]; // Тип фиксации / Fixation type
+  String typeBone = typeBoneListRu[0]; // Тип кости / Bone type
+  String classResorp = classResorpListRu[0]; //Класс резорбции / Resorption class
+  String angle = angleListRu[0]; //Угол вкручивания / Screw angle
 
   @override
   Widget build(BuildContext context) {
@@ -169,82 +169,149 @@ class MyFormState extends State {
         child: Form(
             key: _formKey,
             child: SingleChildScrollView(
-                //прокрутка колонки
+              //прокрутка колонки
                 child: Column(children: [
-              const Text("Тип протезирования"),
-              DropdownButton<String>(
-                value: typeProt,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? newValue) {
-                  //setState(() {
-                  //  dropdownValue = newValue!;
-                  //});
-                },
-                items: <String>['одиночное', '???']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              const Text("Коэффициент стабильности имплантанта (ISQ)"),
-              Slider(
-                value: isq.toDouble(),
-                min: 0,
-                max: 100,
-                divisions: 5,
-                label: isq.round().toString(),
-                onChanged: (double value) {
-                  // setState(() {
-                  //   _currentSliderValue = value;
-                  // });
-                },
-              ),
-              const Text("Динамометрическое усилие, н/см2"),
-              Slider(
-                value: force.toDouble(),
-                min: 0,
-                max: 100,
-                divisions: 5,
-                label: force.round().toString(),
-                onChanged: (double value) {
-                  // setState(() {
-                  //   _currentSliderValue = value;
-                  // });
-                },
-              ),
-              const Text("Тип фиксации"),
-              DropdownButton<String>(
-                value: typeFix,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? newValue) {
-                  //setState(() {
-                  //  dropdownValue = newValue!;
-                  //});
-                },
-                items: <String>['стандартная', '???']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ]))));
+                  const Text("Тип протезирования"),
+                  DropdownButton<String>(
+                    value: typeProt,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        typeProt = newValue!;
+                      });
+                    },
+                    items: typeProtListRu.map((String value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const Text("Коэффициент стабильности имплантанта (ISQ)"),
+                  Slider(
+                    value: isq.toDouble(),
+                    min: 0,
+                    max: 100,
+                    divisions: 5,
+                    label: isq.round().toString(),
+                    onChanged: (double value) {
+                      // setState(() {
+                      //   _currentSliderValue = value;
+                      // });
+                    },
+                  ),
+                  const Text("Динамометрическое усилие, н/см2"),
+                  Slider(
+                    value: force.toDouble(),
+                    min: 0,
+                    max: 100,
+                    divisions: 5,
+                    label: force.round().toString(),
+                    onChanged: (double value) {
+                      // setState(() {
+                      //   _currentSliderValue = value;
+                      // });
+                    },
+                  ),
+                  const Text("Тип фиксации"),
+                  DropdownButton<String>(
+                    value: typeFix,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        typeFix = newValue!;
+                      });
+                    },
+                    items: typeFixListRu.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const Text("Тип кости"),
+                  DropdownButton<String>(
+                    value: typeBone,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        typeBone = newValue!;
+                      });
+                    },
+                    items: typeBoneListRu.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const Text("Класс резорбции"),
+                  DropdownButton<String>(
+                    value: classResorp,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        classResorp = newValue!;
+                      });
+                    },
+                    items: classResorpListRu.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const Text("Угол вкручивания"),
+                  DropdownButton<String>(
+                    value: angle,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        angle = newValue!;
+                      });
+                    },
+                    items: angleListRu.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ]))));
   }
 }
