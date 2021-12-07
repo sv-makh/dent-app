@@ -5,11 +5,19 @@ import 'package:dentapp/result.dart';
 
 void main() => runApp(MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: const Text("Стоматология 🦷"), centerTitle: true),
+        appBar: AppBar(backgroundColor: Colors.white70,
+        leading: Image.asset("assets/images/icons8-tooth-50.png"),
+        title: const Text("Стоматология",style: TextStyle(
+            fontFamily: 'RobotoSlab-ExtraBold', color: Colors.black87
+        )), centerTitle: true),
+        // поменялся цвет фона, шрифт, добавлена картинка
         body: MyForm(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: ElevatedButton(
-          child: const Text("Рассчитать"),
+        floatingActionButton: ElevatedButton(style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.orangeAccent)),
+          child: const Text("Рассчитать",style: TextStyle(
+              fontFamily: 'RobotoSlab-Bold', color: Colors.black87
+          )),
+          // поменялся цвет фона, шрифт
           onPressed: () {
             String message = "Данные успешно сохранены";
             Color messageColor = Colors.green;
@@ -75,16 +83,21 @@ class MyFormState extends State {
             child: SingleChildScrollView(
                 //прокрутка колонки
                 child: Column(children: [
-              const Text("Тип протезирования"),
+              const Text("Тип протезирования",
+              style: TextStyle(
+                fontFamily: 'RobotoSlab-Bold'
+                // поменялся шрифт
+              )),
               DropdownButton<String>(
                 value: typeProt,
                 icon: const Icon(Icons.arrow_downward),
                 iconSize: 24,
                 elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
+                style: const TextStyle(fontFamily: 'RobotoSlab-Bold', color: Colors.lightBlueAccent),
+                // поменялся цвет фона, шрифт
                 underline: Container(
                   height: 2,
-                  color: Colors.deepPurpleAccent,
+                  color: Colors.lightBlueAccent,
                 ),
                 onChanged: (String? newValue) {
                   //setState(() {
@@ -99,8 +112,18 @@ class MyFormState extends State {
                   );
                 }).toList(),
               ),
-              const Text("Коэффициент стабильности имплантанта (ISQ)"),
-              Slider(
+              const Text("Коэффициент стабильности имплантанта (ISQ)",
+                  style: TextStyle(
+                      fontFamily: 'RobotoSlab-Bold'
+                    // поменялся шрифт
+                  )),
+              SliderTheme(data: SliderThemeData(
+                activeTrackColor: Colors.orange,
+                inactiveTrackColor: Colors.orangeAccent,
+                thumbColor: Colors.orange,
+                // добавилась SliderTheme, чтобы поменялся цвет
+              ),
+                child: Slider(
                 value: isq.toDouble(),
                 min: 0,
                 max: 100,
@@ -112,8 +135,17 @@ class MyFormState extends State {
                   // });
                 },
               ),
-              const Text("Динамометрическое усилие, н/см2"),
-              Slider(
+              ),
+              const Text("Динамометрическое усилие, н/см2",
+                  style: TextStyle(
+                      fontFamily: 'RobotoSlab-Bold'
+                  )),
+                SliderTheme(data: SliderThemeData(
+                  activeTrackColor: Colors.orange,
+                  inactiveTrackColor: Colors.orangeAccent,
+                  thumbColor: Colors.orange,
+                ),
+                    child: Slider(
                 value: force.toDouble(),
                 min: 0,
                 max: 100,
@@ -125,16 +157,20 @@ class MyFormState extends State {
                   // });
                 },
               ),
-              const Text("Тип фиксации"),
+                ),
+              const Text("Тип фиксации",
+                  style: TextStyle(
+                      fontFamily: 'RobotoSlab-Bold'
+                  )),
               DropdownButton<String>(
                 value: typeFix,
                 icon: const Icon(Icons.arrow_downward),
                 iconSize: 24,
                 elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
+                style: const TextStyle(fontFamily: 'RobotoSlab-Bold',color: Colors.lightBlueAccent),
                 underline: Container(
                   height: 2,
-                  color: Colors.deepPurpleAccent,
+                  color: Colors.lightBlueAccent,
                 ),
                 onChanged: (String? newValue) {
                   //setState(() {

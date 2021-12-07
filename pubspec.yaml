@@ -56,6 +56,17 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/images/icons8-tooth-50.png
+
+  fonts:
+    - family: RobotoSlab-Bold
+      fonts:
+        - asset: assets/fonts/Roboto_Slab/static/RobotoSlab-Bold.ttf
+        - asset: assets/fonts/Roboto_Slab/static/RobotoSlab-Regular.ttf
+        - asset: assets/fonts/Roboto_Slab/static/RobotoSlab-ExtraBold.ttf
+
+//добавились шрифты и картинка
 
   # To add assets to your application, add an assets section, like this:
   # assets:
