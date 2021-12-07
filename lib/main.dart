@@ -45,23 +45,23 @@ void updateData(data, name) {
     for (int i = 0; i < length; i++) {
 
       if (name == parameters[0]) { //"type_prot"
-        typeProtListRu.add(data["values"][i]["ru"].toString());
+        typeProtListRu.add(utf8.decode(data["values"][i]["ru"].runes.toList()));
         typeProtListEng.add(data["values"][i]["eng"].toString());
       }
       else if (name == parameters[1]) { //"type_fix"
-        typeFixListRu.add(data["values"][i]["ru"].toString());
+        typeFixListRu.add(utf8.decode(data["values"][i]["ru"].runes.toList()));
         typeFixListEng.add(data["values"][i]["eng"].toString());
       }
       else if (name == parameters[2]) { //"type_bone"
-        typeBoneListRu.add(data["values"][i]["ru"].toString());
+        typeBoneListRu.add(utf8.decode(data["values"][i]["ru"].runes.toList()));
         typeBoneListEng.add(data["values"][i]["eng"].toString());
       }
       else if (name == parameters[3]) { //"class_resorp"
-        classResorpListRu.add(data["values"][i]["ru"].toString());
+        classResorpListRu.add(utf8.decode(data["values"][i]["ru"].runes.toList()));
         classResorpListEng.add(data["values"][i]["eng"].toString());
       }
       else if (name == parameters[4]) { //"angle"
-        angleListRu.add(data["values"][i]["ru"].toString());
+        angleListRu.add(utf8.decode(data["values"][i]["ru"].runes.toList()));
         angleListEng.add(data["values"][i]["eng"].toString());
       }
 
@@ -133,14 +133,14 @@ class MyForm extends StatefulWidget {
 class MyFormState extends State {
   final _formKey = GlobalKey<FormState>();
 
-  String typeProt = typeProtListEng[0]; //Тип протезирования / Prosthetics type
+  String typeProt = typeProtListRu[0]; //Тип протезирования / Prosthetics type
   int isq =
   65; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
   int force = 25; //Динамометрическое усилие, н/см2 / Torque force, N/cm2
-  String typeFix = typeFixListEng[0]; // Тип фиксации / Fixation type
-  String typeBone = typeBoneListEng[0]; // Тип кости / Bone type
-  String classResorp = classResorpListEng[0]; //Класс резорбции / Resorption class
-  String angle = angleListEng[0]; //Угол вкручивания / Screw angle
+  String typeFix = typeFixListRu[0]; // Тип фиксации / Fixation type
+  String typeBone = typeBoneListRu[0]; // Тип кости / Bone type
+  String classResorp = classResorpListRu[0]; //Класс резорбции / Resorption class
+  String angle = angleListRu[0]; //Угол вкручивания / Screw angle
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +167,7 @@ class MyFormState extends State {
                         typeProt = newValue!;
                       });
                     },
-                    items: typeProtListEng.map((String value) {
+                    items: typeProtListRu.map((String value) {
                       return DropdownMenuItem(
                         value: value,
                         child: Text(value),
@@ -216,7 +216,7 @@ class MyFormState extends State {
                         typeFix = newValue!;
                       });
                     },
-                    items: typeFixListEng.map((String value) {
+                    items: typeFixListRu.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -239,7 +239,7 @@ class MyFormState extends State {
                         typeBone = newValue!;
                       });
                     },
-                    items: typeBoneListEng.map((String value) {
+                    items: typeBoneListRu.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -262,7 +262,7 @@ class MyFormState extends State {
                         classResorp = newValue!;
                       });
                     },
-                    items: classResorpListEng.map((String value) {
+                    items: classResorpListRu.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -285,7 +285,7 @@ class MyFormState extends State {
                         angle = newValue!;
                       });
                     },
-                    items: angleListEng.map((String value) {
+                    items: angleListRu.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
