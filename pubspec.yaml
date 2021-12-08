@@ -60,13 +60,9 @@ flutter:
     - assets/images/icons8-tooth-50.png
 
   fonts:
-    - family: RobotoSlab-Bold
+    - family: RocknRollOne-Regular
       fonts:
-        - asset: assets/fonts/Roboto_Slab/static/RobotoSlab-Bold.ttf
-        - asset: assets/fonts/Roboto_Slab/static/RobotoSlab-Regular.ttf
-        - asset: assets/fonts/Roboto_Slab/static/RobotoSlab-ExtraBold.ttf
-
-//добавились шрифты и картинка
+        - asset: assets/fonts/RocknRoll_One/RocknRollOne-Regular.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
