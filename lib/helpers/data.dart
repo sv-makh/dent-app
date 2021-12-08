@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart';
 
+//классы для подключения к API
+
 class DataFetch {
+  //name - из массива parameters в main.dart
   Future<dynamic> getData(String name) async {
     FetchHelper fetchData = FetchHelper("http://157.245.254.251:8000/drstudent/api/$name");
 

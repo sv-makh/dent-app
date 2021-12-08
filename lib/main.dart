@@ -5,20 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
 
+//массивы терминов для выпадающих списков на русском
 var typeProtListRu = <String>[];
 var typeFixListRu = <String>[];
 var typeBoneListRu = <String>[];
 var classResorpListRu = <String>[];
 var angleListRu = <String>[];
 
+//массивы терминов для выпадающих списков на английском
 var typeProtListEng = <String>[];
 var typeFixListEng = <String>[];
 var typeBoneListEng = <String>[];
 var classResorpListEng = <String>[];
 var angleListEng = <String>[];
 
+//данные, полученные от API
 DataFetch _dataFetch = DataFetch();
 
+//массив параметров формы с выпадающими списками
 var parameters = [
   "type_prot",
   "type_fix",
@@ -27,6 +31,7 @@ var parameters = [
   "angle"
 ];
 
+//получение данных от API по определённому параметру name из массива parameters
 _getData(name) async {
   try {
     var dataDecoded = await _dataFetch.getData(name);
@@ -36,12 +41,16 @@ _getData(name) async {
   }
 }
 
+//заполнение массивов терминов данными из API для определённого параметра name
 void updateData(data, name) {
   if (data != null) {
     debugPrint(jsonEncode(data));
 
     int length = data["values"].length;
 
+    //для каждого параметра name заполняется соответствующая пара массивов
+    //с русскими и английскими терминами;
+    //для правильного отображения кириллицы дополнительно применяется декодирование
     for (int i = 0; i < length; i++) {
 
       if (name == parameters[0]) { //"type_prot"
@@ -69,6 +78,7 @@ void updateData(data, name) {
   }
 }
 
+//получение данных и заполнение ими массивов терминов для всех параметров parameters
 Future _getParameters() async {
   for (var p in parameters) {
     await _getData(p);
@@ -76,6 +86,7 @@ Future _getParameters() async {
 }
 
 void main() async {
+  //получение данных для выпадающих списков ДО построения формы
   await _getParameters();
 
   runApp(MaterialApp(
