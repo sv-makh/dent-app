@@ -33,12 +33,12 @@ var parameters = [
 
 //получение данных от API по определённому параметру name из массива parameters
 _getData(name) async {
-  try {
+  //try {
     var dataDecoded = await _dataFetch.getData(name);
     updateData(dataDecoded, name);
-  } catch (e) {
-    debugPrint(e.toString());
-  }
+  //} catch (e) {
+  //  debugPrint(e.toString());
+  //}
 }
 
 //заполнение массивов терминов данными из API для определённого параметра name
@@ -86,13 +86,22 @@ Future _getParameters() async {
 }
 
 void main() async {
-  //получение данных для выпадающих списков ДО построения формы
-  await _getParameters();
+  //удалось ли получить данные с сервера
+  bool _connection = true;
+  try {
+    //получение данных для выпадающих списков ДО построения формы
+    await _getParameters();
+  } catch (e) {
+    _connection = false;
+    debugPrint(e.toString());
+  }
 
   runApp(MaterialApp(
     home: Scaffold(
       appBar: AppBar(title: const Text("Стоматология 🦷"), centerTitle: true),
-      body: MyForm(),
+      //если данные для построения формы были получены, строится форма MyForm()
+      //иначе - пустой экран NoConnectionNoForm()
+      body: _connection == true ? MyForm() : NoConnectionNoForm(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: ElevatedButton(
         child: const Text("Рассчитать"),
@@ -134,6 +143,14 @@ void main() async {
       ),
     ),
   ));
+}
+
+//пустой экран на случай неудачи с получением начальных данных с сервера
+class NoConnectionNoForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
 }
 
 class MyForm extends StatefulWidget {
