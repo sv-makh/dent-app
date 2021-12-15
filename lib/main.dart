@@ -89,9 +89,10 @@ void main() async {
   //удалось ли получить данные с сервера
   bool _connection = true;
   try {
-    //получение данных для выпадающих списков ДО построения формы
+    //получение данных для выпадающих списков (до построения формы)
     await _getParameters();
   } catch (e) {
+    //данные получить не удалось
     _connection = false;
     debugPrint(e.toString());
   }
@@ -99,11 +100,13 @@ void main() async {
   runApp(MaterialApp(
     home: Scaffold(
       appBar: AppBar(title: const Text("Стоматология 🦷"), centerTitle: true),
-      //если данные для построения формы были получены, строится форма MyForm()
-      //иначе - пустой экран NoConnectionNoForm()
-      body: _connection == true ? MyForm() : NoConnectionNoForm(),
+      //если данные для построения формы не были получены, показывается пустой экран
+      //а если были - строится форма MyForm()
+      body: _connection == false ? Container() : MyForm(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: ElevatedButton(
+      //если данные для построения формы не были получены
+      //кнопка "Рассчитать" не показывается
+      floatingActionButton: _connection == false ? Container() : ElevatedButton(
         child: const Text("Рассчитать"),
         onPressed: () {
           String message = "Данные успешно сохранены";
@@ -133,24 +136,16 @@ void main() async {
           }
         },
       ),
-      bottomNavigationBar: BottomAppBar(
+      /*bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         notchMargin: 4.0,
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
         ),
-      ),
+      ),*/
     ),
   ));
-}
-
-//пустой экран на случай неудачи с получением начальных данных с сервера
-class NoConnectionNoForm extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
 }
 
 class MyForm extends StatefulWidget {
