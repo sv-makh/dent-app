@@ -66,7 +66,12 @@ flutter:
   assets:
     - assets/
     - assets/icons/
+    - assets/images/icons8-tooth-50.png
 
+  fonts:
+    - family: RocknRollOne-Regular
+      fonts:
+        - asset: assets/fonts/RocknRoll_One/RocknRollOne-Regular.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

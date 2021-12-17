@@ -99,15 +99,23 @@ void main() async {
 
   runApp(MaterialApp(
     home: Scaffold(
-      appBar: AppBar(title: const Text("Стоматология 🦷"), centerTitle: true),
+      // поменялся цвет фона, шрифт, добавлена картинка
+      appBar: AppBar(backgroundColor: Colors.white70,
+        leading: Image.asset("assets/images/icons8-tooth-50.png"),
+        title: const Text("Стоматология",style: TextStyle(
+            fontFamily: 'RocknRollOne-Regular', color: Colors.black87
+        )), centerTitle: true),
       //если данные для построения формы не были получены, показывается пустой экран
       //а если были - строится форма MyForm()
       body: _connection == false ? Container() : MyForm(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // поменялся цвет фона, шрифт
       //если данные для построения формы не были получены
       //кнопка "Рассчитать" не показывается
-      floatingActionButton: _connection == false ? Container() : ElevatedButton(
-        child: const Text("Рассчитать"),
+      floatingActionButton: _connection == false ? Container() : ElevatedButton(style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.amber)),
+          child: const Text("Рассчитать",style: TextStyle(
+              fontFamily: 'RocknRollOne-Regular', color: Colors.black87
+          )),
         onPressed: () {
           String message = "Данные успешно сохранены";
           Color messageColor = Colors.green;
@@ -174,16 +182,25 @@ class MyFormState extends State {
             child: SingleChildScrollView(
               //прокрутка колонки
                 child: Column(children: [
-                  const Text("Тип протезирования"),
+                  const Text("Тип протезирования",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'RocknRollOne-Regular'
+                    // поменялся шрифт
+                  )),
                   DropdownButton<String>(
                     value: typeProt,
                     icon: const Icon(Icons.arrow_downward),
                     iconSize: 24,
                     elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                    // поменялся цвет фона, шрифт
                     underline: Container(
                       height: 2,
-                      color: Colors.deepPurpleAccent,
+                      color: Colors.cyan,
                     ),
                     onChanged: (String? newValue) {
                       setState(() {
@@ -197,42 +214,75 @@ class MyFormState extends State {
                       );
                     }).toList(),
                   ),
-                  const Text("Коэффициент стабильности имплантанта (ISQ)"),
-                  Slider(
-                    value: isq.toDouble(),
-                    min: 0,
-                    max: 100,
-                    divisions: 5,
-                    label: isq.round().toString(),
-                    onChanged: (double value) {
+                  const Text("Коэффициент стабильности имплантанта (ISQ)",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontFamily: 'RocknRollOne-Regular'
+                    // поменялся шрифт
+                  )),
+                  SliderTheme(data: SliderThemeData(
+                    activeTrackColor: Colors.amber,
+                    inactiveTrackColor: Colors.amberAccent,
+                    thumbColor: Colors.amber,
+                    // добавилась SliderTheme, чтобы поменялся цвет
+                    ),
+                    child: Slider(
+                      value: isq.toDouble(),
+                      min: 0,
+                      max: 100,
+                      divisions: 5,
+                      label: isq.round().toString(),
+                      onChanged: (double value) {
                       // setState(() {
                       //   _currentSliderValue = value;
                       // });
-                    },
+                      },
+                    ),
                   ),
-                  const Text("Динамометрическое усилие, н/см2"),
-                  Slider(
-                    value: force.toDouble(),
-                    min: 0,
-                    max: 100,
-                    divisions: 5,
-                    label: force.round().toString(),
-                    onChanged: (double value) {
+                  const Text("Динамометрическое усилие, н/см2",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontFamily: 'RocknRollOne-Regular'
+                  )),
+                  SliderTheme(data: SliderThemeData(
+                    activeTrackColor: Colors.amber,
+                    inactiveTrackColor: Colors.amberAccent,
+                    thumbColor: Colors.amber,
+                    ),
+                    child: Slider(
+                      value: force.toDouble(),
+                      min: 0,
+                      max: 100,
+                      divisions: 5,
+                      label: force.round().toString(),
+                      onChanged: (double value) {
                       // setState(() {
                       //   _currentSliderValue = value;
                       // });
-                    },
+                      },
+                    ),
                   ),
-                  const Text("Тип фиксации"),
+                  const Text("Тип фиксации",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'RocknRollOne-Regular'
+                    // поменялся шрифт
+                  )),
                   DropdownButton<String>(
                     value: typeFix,
                     icon: const Icon(Icons.arrow_downward),
                     iconSize: 24,
                     elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                    // поменялся цвет фона, шрифт
                     underline: Container(
                       height: 2,
-                      color: Colors.deepPurpleAccent,
+                      color: Colors.cyan,
                     ),
                     onChanged: (String? newValue) {
                       setState(() {
@@ -246,16 +296,25 @@ class MyFormState extends State {
                       );
                     }).toList(),
                   ),
-                  const Text("Тип кости"),
+                  const Text("Тип кости",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'RocknRollOne-Regular'
+                    // поменялся шрифт
+                  )),
                   DropdownButton<String>(
                     value: typeBone,
                     icon: const Icon(Icons.arrow_downward),
                     iconSize: 24,
                     elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                    // поменялся цвет фона, шрифт
                     underline: Container(
                       height: 2,
-                      color: Colors.deepPurpleAccent,
+                      color: Colors.cyan,
                     ),
                     onChanged: (String? newValue) {
                       setState(() {
@@ -269,16 +328,25 @@ class MyFormState extends State {
                       );
                     }).toList(),
                   ),
-                  const Text("Класс резорбции"),
+                  const Text("Класс резорбции",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'RocknRollOne-Regular'
+                    // поменялся шрифт
+                  )),
                   DropdownButton<String>(
                     value: classResorp,
                     icon: const Icon(Icons.arrow_downward),
                     iconSize: 24,
                     elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                    // поменялся цвет фона, шрифт
                     underline: Container(
                       height: 2,
-                      color: Colors.deepPurpleAccent,
+                      color: Colors.cyan,
                     ),
                     onChanged: (String? newValue) {
                       setState(() {
@@ -292,16 +360,25 @@ class MyFormState extends State {
                       );
                     }).toList(),
                   ),
-                  const Text("Угол вкручивания"),
+                  const Text("Угол вкручивания",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'RocknRollOne-Regular'
+                    // поменялся шрифт
+                  )),
                   DropdownButton<String>(
                     value: angle,
                     icon: const Icon(Icons.arrow_downward),
                     iconSize: 24,
                     elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                    // поменялся цвет фона, шрифт
                     underline: Container(
                       height: 2,
-                      color: Colors.deepPurpleAccent,
+                      color: Colors.cyan,
                     ),
                     onChanged: (String? newValue) {
                       setState(() {
