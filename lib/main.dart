@@ -33,12 +33,12 @@ var parameters = [
 
 //получение данных от API по определённому параметру name из массива parameters
 _getData(name) async {
-  try {
+  //try {
     var dataDecoded = await _dataFetch.getData(name);
     updateData(dataDecoded, name);
-  } catch (e) {
-    debugPrint(e.toString());
-  }
+  //} catch (e) {
+  //  debugPrint(e.toString());
+  //}
 }
 
 //заполнение массивов терминов данными из API для определённого параметра name
@@ -86,8 +86,16 @@ Future _getParameters() async {
 }
 
 void main() async {
-  //получение данных для выпадающих списков ДО построения формы
-  await _getParameters();
+  //удалось ли получить данные с сервера
+  bool _connection = true;
+  try {
+    //получение данных для выпадающих списков (до построения формы)
+    await _getParameters();
+  } catch (e) {
+    //данные получить не удалось
+    _connection = false;
+    debugPrint(e.toString());
+  }
 
   runApp(MaterialApp(
     home: Scaffold(
@@ -97,10 +105,14 @@ void main() async {
         title: const Text("Стоматология",style: TextStyle(
             fontFamily: 'RocknRollOne-Regular', color: Colors.black87
         )), centerTitle: true),
-      body: MyForm(),
+      //если данные для построения формы не были получены, показывается пустой экран
+      //а если были - строится форма MyForm()
+      body: _connection == false ? Container() : MyForm(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       // поменялся цвет фона, шрифт
-      floatingActionButton: ElevatedButton(style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.amber)),
+      //если данные для построения формы не были получены
+      //кнопка "Рассчитать" не показывается
+      floatingActionButton: _connection == false ? Container() : ElevatedButton(style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.amber)),
           child: const Text("Рассчитать",style: TextStyle(
               fontFamily: 'RocknRollOne-Regular', color: Colors.black87
           )),
@@ -132,14 +144,14 @@ void main() async {
           }
         },
       ),
-      bottomNavigationBar: BottomAppBar(
+      /*bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         notchMargin: 4.0,
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
         ),
-      ),
+      ),*/
     ),
   ));
 }
