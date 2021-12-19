@@ -1,0 +1,23 @@
+{
+    "prostheticsType": "Тип протезирования",
+    "simple": "одиночное",
+    "bridge": "мостовидное",
+    "implantStabilityQuotient": "Коэффициент стабильности имплантанта(ISQ)",
+    "torqueForce": "Динамометрическое усилие, н / см2",
+    "fixationType": "Тип фиксации",
+    "standard": "стандартная",
+    "bicortical": "бикортикальная",
+    "boneType": "Тип кости",
+    "hard": "твердая(D1)",
+    "dense": "плотная(D2)",
+    "soft": "мягкая(D3)",
+    "loose": "рыхлая(D4)",
+    "resorptionClass": "Класс резорбции",
+    "screwAngle": "Угол вкручивания",
+    "durationOfOrthopedicLoad": "Срок ортопедической нагрузки (в сутках)",
+    "calculate": "Расcчитать",
+    "dentistry": "Стоматология",
+    "congratulations": "Поздравляем!",
+    "calculationResults": "Результаты расчета:",
+    "close": "Закрыть"
+}

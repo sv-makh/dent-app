@@ -1,0 +1,23 @@
+{
+    "prostheticsType": "Prosthetics type",
+    "simple": "simple",
+    "bridge": "bridge",
+    "implantStabilityQuotient": "Implant Stability Quotient(ISQ)",
+    "torqueForce": "Torque force, N / cm2",
+    "fixationType": "Fixation type",
+    "standard": "standard",
+    "bicortical": "bicortical",
+    "boneType": "Bone type",
+    "hard": "hard(D1)",
+    "dense": "dense(D2)",
+    "soft": "soft(D3)",
+    "loose": "loose(D4)",
+    "resorptionClass": "Resorption class",
+    "screwAngle": "Screw angle",
+    "durationOfOrthopedicLoad": "Duration of orthopedic load (days)",
+    "calculate": "Calculate",
+    "dentistry": "Dentistry",
+    "congratulations": "Congratulations!",
+    "calculationResults": "Calculation results:",
+    "close": "Close"
+}

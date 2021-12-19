@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResultingRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Congratulations!"),
+          title: Text(
+            AppLocalizations.of(context)!.fixationType, //"Congratulations!"
+          ),
           centerTitle: true,
         ),
         body: Padding(
@@ -15,7 +18,8 @@ class ResultingRoute extends StatelessWidget {
                 child: Column(
               children: [
                 Text(
-                  "Результаты расчета:",
+                  AppLocalizations.of(context)!
+                      .calculationResults, // "Результаты расчета:",
                   style: TextStyle(
                       fontSize: 20.0,
                       color: Colors.green,
@@ -31,7 +35,9 @@ class ResultingRoute extends StatelessWidget {
                       //выход из приложения
                       SystemNavigator.pop();
                     },
-                    child: Text("Закрыть"))
+                    child: Text(
+                      AppLocalizations.of(context)!.close, // "Закрыть"
+                    ))
               ],
             ))));
   }
