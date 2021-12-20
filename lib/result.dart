@@ -8,7 +8,8 @@ class ResultingRoute extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            AppLocalizations.of(context)!.fixationType, //"Congratulations!"
+            AppLocalizations.of(context)!
+                .completedSuccessfully, //"Форма успешно заполнена"
           ),
           centerTitle: true,
         ),

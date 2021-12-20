@@ -2,10 +2,14 @@
 
 import 'dart:convert';
 
+import 'package:dentapp/appLocalizationDelegate.dart';
 import 'package:flutter/material.dart';
 // import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'appLocalization.dart';
 
 //массивы терминов для выпадающих списков на русском
 var typeProtListRu = <String>[];
@@ -81,97 +85,118 @@ void updateData(data, name) {
 }
 
 //получение данных и заполнение ими массивов терминов для всех параметров parameters
-Future _getParameters() async {
-  for (var p in parameters) {
-    await _getData(p);
-  }
-}
+bool connection = true;
 
-void main() async {
-  //удалось ли получить данные с сервера
-  bool _connection = true;
+Future _getParameters() async {
+//удалось ли получить данные с сервера
   try {
     //получение данных для выпадающих списков (до построения формы)
-    await _getParameters();
+    for (var p in parameters) {
+      await _getData(p);
+    }
   } catch (e) {
     //данные получить не удалось
-    _connection = false;
+    connection = false;
     debugPrint(e.toString());
   }
-
-  runApp(MaterialApp(
-    supportedLocales: AppLocalizations.supportedLocales,
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    home: Scaffold(
-      // поменялся цвет фона, шрифт, добавлена картинка
-      appBar: AppBar(
-          backgroundColor: Colors.white70,
-          leading: Image.asset("assets/images/icons8-tooth-50.png"),
-          title: Text(
-              //AppLocalizations.of(context)!.dentistry,
-              "Стоматология",
-              style: TextStyle(
-                  fontFamily: 'RocknRollOne-Regular', color: Colors.black87)),
-          centerTitle: true),
-
-      //если данные для построения формы не были получены, показывается пустой экран
-      //а если были - строится форма MyForm()
-      body: _connection == false ? Container() : MyForm(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // поменялся цвет фона, шрифт
-      //если данные для построения формы не были получены
-      //кнопка "Рассчитать" не показывается
-      floatingActionButton: _connection == false
-          ? Container()
-          : ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.amber)),
-              child: Text(
-                  //AppLocalizations.of(context)!.calculate,
-                  "Рассчитать",
-                  style: TextStyle(
-                      fontFamily: 'RocknRollOne-Regular',
-                      color: Colors.black87)),
-              onPressed: () {
-                String message = "Данные успешно сохранены";
-                Color messageColor = Colors.green;
-
-                /*if (!_formKey.currentState!.validate() ||
-                      !_feedDry && !_feedWet && !_feedNatural) {
-                    message = "Данные неполны";
-                    messageColor = Colors.red;
-
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(message),
-                      duration: const Duration(seconds: 3),
-                      backgroundColor: messageColor,
-                      action: SnackBarAction(
-                        label: "Ok",
-                        textColor: Colors.black,
-                        onPressed: () {},
-                      ),
-                    ));
-                  } else */
-                {
-                  /*Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ResultingRoute()),
-              );*/
-                }
-              },
-            ),
-      /*bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        notchMargin: 4.0,
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        ),
-      ),*/
-    ),
-  ));
 }
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // This widget is the root of your application.
+  AppLocalizationDelegate _localeOverrideDelegate =
+      AppLocalizationDelegate(Locale('en', 'US'));
+
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(localizationsDelegates: [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      _localeOverrideDelegate
+    ], supportedLocales: [
+      const Locale('en', 'US'),
+      const Locale('ru', 'RU')
+    ], home: MyHomePage());
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalization.of(context)!.heyWorld),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: ListTile(
+              leading: TextButton(
+                onPressed: () {
+                  setState(() {
+                    AppLocalization.load(Locale('en', 'US'));
+                  });
+                },
+                child: Text('ENGLISH'),
+              ),
+              trailing: TextButton(
+                onPressed: () {
+                  setState(() {
+                    AppLocalization.load(Locale('ru', 'Ru'));
+                  });
+                },
+                child: Text('Russian'),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              '',
+              style: TextStyle(fontSize: 20),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+//  {
+//   runApp(MaterialApp(
+//     supportedLocales: AppLocalizations.supportedLocales,
+//     localizationsDelegates: AppLocalizations.localizationsDelegates,
+//     home: Scaffold(
+//       // поменялся цвет фона, шрифт, добавлена картинка
+//       appBar: AppBar(
+//           backgroundColor: Colors.white70,
+//           leading: Image.asset("assets/images/icons8-tooth-50.png"),
+//           title: Text(
+//               //AppLocalizations.of(context)!.dentistry,
+//               "Стоматология",
+//               style: TextStyle(
+//                   fontFamily: 'RocknRollOne-Regular', color: Colors.black87)),
+//           centerTitle: true),
+
+//       //если данные для построения формы не были получены, показывается пустой экран
+//       //а если были - строится форма MyForm()
+//       body: connection == false ? Container() : MyForm(),
+//     ),
+//   ));
+// }
 
 class MyForm extends StatefulWidget {
   @override
@@ -193,228 +218,283 @@ class MyFormState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.all(10.0),
-        child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-                //прокрутка колонки
-                child: Column(children: [
-              Text(
-                  AppLocalizations.of(context)!
-                      .prostheticsType, // "Тип протезирования",
-                  style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: typeProt,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    typeProt = newValue!;
-                  });
-                },
-                items: typeProtListRu.map((String value) {
-                  return DropdownMenuItem(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              Text(
-                  AppLocalizations.of(context)!
-                      .implantStabilityQuotient, // "Коэффициент стабильности имплантанта (ISQ)",
-                  textAlign: TextAlign.center,
-                  style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
-                          // поменялся шрифт
-                          )),
-              SliderTheme(
-                data: SliderThemeData(
-                  activeTrackColor: Colors.amber,
-                  inactiveTrackColor: Colors.amberAccent,
-                  thumbColor: Colors.amber,
-                  // добавилась SliderTheme, чтобы поменялся цвет
-                ),
-                child: Slider(
-                  value: isq.toDouble(),
-                  min: 0,
-                  max: 100,
-                  divisions: 5,
-                  label: isq.round().toString(),
-                  onChanged: (double value) {
-                    // setState(() {
-                    //   _currentSliderValue = value;
-                    // });
+    return Scaffold(
+      body: Container(
+          padding: const EdgeInsets.all(10.0),
+          child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                  //прокрутка колонки
+                  child: Column(children: [
+                Text(
+                    AppLocalizations.of(context)!
+                        .prostheticsType, // "Тип протезирования",
+                    style: TextStyle(
+                        fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                        // поменялся шрифт
+                        )),
+                DropdownButton<String>(
+                  value: typeProt,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      typeProt = newValue!;
+                    });
                   },
+                  items: typeProtListRu.map((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
-              ),
-              Text(
-                  AppLocalizations.of(context)!
-                      .torqueForce, //"Динамометрическое усилие, н/см2",
-                  textAlign: TextAlign.center,
+                Text(
+                    AppLocalizations.of(context)!
+                        .implantStabilityQuotient, // "Коэффициент стабильности имплантанта (ISQ)",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                        // поменялся шрифт
+                        )),
+                SliderTheme(
+                  data: SliderThemeData(
+                    activeTrackColor: Colors.amber,
+                    inactiveTrackColor: Colors.amberAccent,
+                    thumbColor: Colors.amber,
+                    // добавилась SliderTheme, чтобы поменялся цвет
+                  ),
+                  child: Slider(
+                    value: isq.toDouble(),
+                    min: 0,
+                    max: 100,
+                    divisions: 5,
+                    label: isq.round().toString(),
+                    onChanged: (double value) {
+                      // setState(() {
+                      //   _currentSliderValue = value;
+                      // });
+                    },
+                  ),
+                ),
+                Text(
+                    AppLocalizations.of(context)!
+                        .torqueForce, //"Динамометрическое усилие, н/см2",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 13, fontFamily: 'RocknRollOne-Regular')),
+                SliderTheme(
+                  data: SliderThemeData(
+                    activeTrackColor: Colors.amber,
+                    inactiveTrackColor: Colors.amberAccent,
+                    thumbColor: Colors.amber,
+                  ),
+                  child: Slider(
+                    value: force.toDouble(),
+                    min: 0,
+                    max: 100,
+                    divisions: 5,
+                    label: force.round().toString(),
+                    onChanged: (double value) {
+                      // setState(() {
+                      //   _currentSliderValue = value;
+                      // });
+                    },
+                  ),
+                ),
+                Text(
+                    AppLocalizations.of(context)!
+                        .fixationType, // "Тип фиксации",
+                    style: TextStyle(
+                        fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                        // поменялся шрифт
+                        )),
+                DropdownButton<String>(
+                  value: typeFix,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      typeFix = newValue!;
+                    });
+                  },
+                  items: typeFixListRu.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Text(AppLocalizations.of(context)!.boneType, //"Тип кости",
+                    style: TextStyle(
+                        fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                        // поменялся шрифт
+                        )),
+                DropdownButton<String>(
+                  value: typeBone,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      typeBone = newValue!;
+                    });
+                  },
+                  items: typeBoneListRu.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Text(
+                    AppLocalizations.of(context)!
+                        .resorptionClass, // "Класс резорбции"
+                    style: TextStyle(
+                        fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                        // поменялся шрифт
+                        )),
+                DropdownButton<String>(
+                  value: classResorp,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      classResorp = newValue!;
+                    });
+                  },
+                  items: classResorpListRu.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Text(
+                    AppLocalizations.of(context)!
+                        .screwAngle, // "Угол вкручивания"
+                    style: TextStyle(
+                        fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                        // поменялся шрифт
+                        )),
+                DropdownButton<String>(
+                  value: angle,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      angle = newValue!;
+                    });
+                  },
+                  items: angleListRu.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ])))),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // поменялся цвет фона, шрифт
+      //если данные для построения формы не были получены
+      //кнопка "Рассчитать" не показывается
+      floatingActionButton: connection == false
+          ? Container()
+          : ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.amber)),
+              child: Text(
+                  //AppLocalizations.of(context)!.calculate,
+                  "Рассчитать",
                   style: TextStyle(
-                      fontSize: 13, fontFamily: 'RocknRollOne-Regular')),
-              SliderTheme(
-                data: SliderThemeData(
-                  activeTrackColor: Colors.amber,
-                  inactiveTrackColor: Colors.amberAccent,
-                  thumbColor: Colors.amber,
-                ),
-                child: Slider(
-                  value: force.toDouble(),
-                  min: 0,
-                  max: 100,
-                  divisions: 5,
-                  label: force.round().toString(),
-                  onChanged: (double value) {
-                    // setState(() {
-                    //   _currentSliderValue = value;
-                    // });
-                  },
-                ),
-              ),
-              Text(
-                  AppLocalizations.of(context)!.fixationType, // "Тип фиксации",
-                  style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: typeFix,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    typeFix = newValue!;
-                  });
-                },
-                items: typeFixListRu.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              Text(AppLocalizations.of(context)!.boneType, //"Тип кости",
-                  style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: typeBone,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    typeBone = newValue!;
-                  });
-                },
-                items: typeBoneListRu.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              Text(
-                  AppLocalizations.of(context)!
-                      .resorptionClass, // "Класс резорбции"
-                  style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: classResorp,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    classResorp = newValue!;
-                  });
-                },
-                items: classResorpListRu.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              Text(
-                  AppLocalizations.of(context)!
-                      .screwAngle, // "Угол вкручивания"
-                  style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: angle,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    angle = newValue!;
-                  });
-                },
-                items: angleListRu.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ]))));
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.black87)),
+              onPressed: () {
+                String message = "Данные успешно сохранены";
+                Color messageColor = Colors.green;
+
+                //   if (!_formKey.currentState!.validate() ||
+                //         !_feedDry && !_feedWet && !_feedNatural) {
+                //       message = "Данные неполны";
+                //       messageColor = Colors.red;
+
+                //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //         content: Text(message),
+                //         duration: const Duration(seconds: 3),
+                //         backgroundColor: messageColor,
+                //         action: SnackBarAction(
+                //           label: "Ok",
+                //           textColor: Colors.black,
+                //           onPressed: () {},
+                //         ),
+                //       ));
+                //     } else */
+                //   {
+                //     Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ResultingRoute()),
+                // );
+                //   }
+              },
+            ),
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        notchMargin: 4.0,
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ),
+      ),
+    );
   }
 }
