@@ -172,6 +172,13 @@ class MyForm extends StatefulWidget {
 class MyFormState extends State {
   final _formKey = GlobalKey<FormState>();
 
+  void _getForceParameter(int isq) {
+  //значения для тестирования
+  //  forceMin = 100 - isq;
+  //  forceMax = 100 + isq;
+  //  force = forceMin;
+  }
+
   String typeProt = typeProtListRu[0]; //Тип протезирования / Prosthetics type
   int isq =
       65; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
@@ -262,8 +269,17 @@ class MyFormState extends State {
                       max: isqMax.toDouble(),
                       divisions: 100,
                       label: isq.round().toString(),
+                      //изменять isq пока пользователь двигает слайдер
                       onChanged: (value) {
                         setState(() => isq = value.toInt());
+                      },
+                      //изменять зависимый параметр force только когда
+                      //пользователь прекратил двигать слайдер
+                      onChangeEnd: (value) {
+                        setState(() {
+                          isq = value.toInt();
+                          _getForceParameter(isq);
+                        });
                       },
                     ),
                   )),
@@ -304,7 +320,7 @@ class MyFormState extends State {
                       value: force.toDouble(),
                       min: forceMin.toDouble(),
                       max: forceMax.toDouble(),
-                      divisions: 100,
+                      divisions: forceMax - forceMin,
                       label: force.round().toString(),
                       onChanged: (value) {
                         //setState(() => force = value.toInt());
