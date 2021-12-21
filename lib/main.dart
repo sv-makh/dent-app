@@ -172,11 +172,18 @@ class MyForm extends StatefulWidget {
 class MyFormState extends State {
   final _formKey = GlobalKey<FormState>();
 
-  void _getForceParameter(int isq) {
+  void _getForceParameter(int isq) async {
   //значения для тестирования
   //  forceMin = 100 - isq;
   //  forceMax = 100 + isq;
   //  force = forceMin;
+    try {
+      var dataDecoded = await _dataFetch.getData("isq");
+      if (dataDecoded != null) debugPrint(jsonEncode(dataDecoded));
+      else debugPrint("dataDecoded is null!");
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   String typeProt = typeProtListRu[0]; //Тип протезирования / Prosthetics type
@@ -190,9 +197,9 @@ class MyFormState extends State {
   String angle = angleListRu[0]; //Угол вкручивания / Screw angle
 
   //минимальное и максимальное значения для слайдеров с параметрами isq и force
-  int isqMin = 0;
+  int isqMin = 50;
   int isqMax = 100;
-  int forceMin = 0;
+  int forceMin = 15;
   int forceMax = 100;
 
   @override
