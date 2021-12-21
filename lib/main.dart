@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 // import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 //массивы терминов для выпадающих списков на русском
 var typeProtListRu = <String>[];
@@ -87,6 +88,8 @@ Future _getParameters() async {
   }
 }
 
+Locale locale = Locale(Intl.getCurrentLocale());
+
 void main() async {
   //удалось ли получить данные с сервера
   bool _connection = true;
@@ -100,6 +103,7 @@ void main() async {
   }
 
   runApp(MaterialApp(
+    locale: locale,
     supportedLocales: AppLocalizations.supportedLocales,
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     home: Scaffold(
@@ -191,6 +195,13 @@ class MyFormState extends State {
       classResorpListRu[0]; //Класс резорбции / Resorption class
   String angle = angleListRu[0]; //Угол вкручивания / Screw angle
 
+  bool _locValue = true;
+
+  _setLocale(bool value) {
+    //value == true ? locale = Locale('ru') : Locale('en');
+    value == true? Intl.defaultLocale = 'ru' : Intl.defaultLocale = 'en';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -199,7 +210,14 @@ class MyFormState extends State {
             key: _formKey,
             child: SingleChildScrollView(
                 //прокрутка колонки
-                child: Column(children: [
+              child: Column(children: [
+              SwitchListTile(value: _locValue,
+                onChanged: (bool value) {
+                  setState(() {
+                    _locValue = value;
+                    _setLocale(_locValue);
+                  });
+                }),
               Text(
                   AppLocalizations.of(context)!
                       .prostheticsType, // "Тип протезирования",
