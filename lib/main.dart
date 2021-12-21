@@ -34,8 +34,8 @@ var parameters = [
 //получение данных от API по определённому параметру name из массива parameters
 _getData(name) async {
   //try {
-  var dataDecoded = await _dataFetch.getData(name);
-  updateData(dataDecoded, name);
+    var dataDecoded = await _dataFetch.getData(name);
+    updateData(dataDecoded, name);
   //} catch (e) {
   //  debugPrint(e.toString());
   //}
