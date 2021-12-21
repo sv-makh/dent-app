@@ -102,7 +102,7 @@ void main() async {
       // поменялся цвет фона, шрифт, добавлена картинка
       appBar: AppBar(
           backgroundColor: Colors.white70,
-          leading: Image.asset("assets/images/icons8-tooth-50.png"),
+          leading: Image.asset("assets/icons/icons8.webp"),
           title: const Text("Стоматология",
               style: TextStyle(
                   fontFamily: 'RocknRollOne-Regular', color: Colors.black87)),
