@@ -1,9 +1,11 @@
 /*// @dart=2.9*/
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
+import 'package:dentapp/helpers/app_properties_bloc.dart';
 
 //массивы терминов для выпадающих списков на русском
 var typeProtListRu = <String>[];
@@ -85,84 +87,90 @@ Future _getParameters() async {
   }
 }
 
+String defaultLocale = Platform.localeName;
+bool ruLocale = true;
+
+String titleApp = "";//ruLocale == true ? "Стоматология" : "Stomatology";
+String titleButton = "";//ruLocale == true ? "Рассчитать" : "Calculate";
+
+changeLocaleTitle() {
+  appBloc.updateTitle(ruLocale == true ? "Стоматология" : "Stomatology");
+  appBloc.updateTitleButton(ruLocale == true ? "Рассчитать" : "Calculate");
+}
+
+//удалось ли получить данные с сервера
+bool connection = true;
+
 void main() async {
-  //удалось ли получить данные с сервера
-  bool _connection = true;
+
   try {
     //получение данных для выпадающих списков (до построения формы)
     await _getParameters();
   } catch (e) {
     //данные получить не удалось
-    _connection = false;
+    connection = false;
     debugPrint(e.toString());
   }
 
-  runApp(MaterialApp(
+  if (defaultLocale == "ru_RU")
+    ruLocale = true;
+  else
+    ruLocale = false;
+
+  runApp(MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
     home: Scaffold(
       // поменялся цвет фона, шрифт, добавлена картинка
       appBar: AppBar(
           backgroundColor: Colors.white70,
           leading: Image.asset("assets/icons/icons8.webp"),
-          title: const Text("Стоматология",
-              style: TextStyle(
-                  fontFamily: 'RocknRollOne-Regular', color: Colors.black87)),
-          centerTitle: true),
+          title:StreamBuilder<Object>(
+            stream: appBloc.titleStream,
+            initialData: ruLocale == true ? "Стоматология" : "Stomatology",
+            builder: (context, snapshot) {
+              return Text(snapshot.data.toString(),
+                style: TextStyle(fontFamily: 'RocknRollOne-Regular', color: Colors.black87));
+            }
+          ),
+        centerTitle: true,
+      ),
       //если данные для построения формы не были получены, показывается пустой экран
       //а если были - строится форма MyForm()
-      body: _connection == false ? Container() : MyForm(),
+      body: connection == false ? Container() : MyForm(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       // поменялся цвет фона, шрифт
       //если данные для построения формы не были получены
       //кнопка "Рассчитать" не показывается
-      floatingActionButton: _connection == false
+      floatingActionButton: connection == false
           ? Container()
           : ElevatedButton(
               style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all<Color>(Colors.amber)),
-              child: const Text("Рассчитать",
-                  style: TextStyle(
-                      fontFamily: 'RocknRollOne-Regular',
-                      color: Colors.black87)),
+              child: StreamBuilder<Object>(
+                stream: appBloc.titleButtonStream,
+                initialData: ruLocale == true ? "Рассчитать" : "Calculate",
+                builder: (context, snapshot) {
+                  return Text(snapshot.data.toString(),
+                    style: TextStyle(fontFamily: 'RocknRollOne-Regular', color: Colors.black87));
+                },
+              ),
               onPressed: () {
-                String message = "Данные успешно сохранены";
-                Color messageColor = Colors.green;
-
-                /*if (!_formKey.currentState!.validate() ||
-                      !_feedDry && !_feedWet && !_feedNatural) {
-                    message = "Данные неполны";
-                    messageColor = Colors.red;
-
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(message),
-                      duration: const Duration(seconds: 3),
-                      backgroundColor: messageColor,
-                      action: SnackBarAction(
-                        label: "Ok",
-                        textColor: Colors.black,
-                        onPressed: () {},
-                      ),
-                    ));
-                  } else */
-                {
-                  /*Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ResultingRoute()),
-              );*/
-                }
               },
             ),
-      /*bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        notchMargin: 4.0,
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        ),
-      ),*/
     ),
-  ));
-}
+  );
+}}
 
 class MyForm extends StatefulWidget {
   @override
@@ -186,32 +194,60 @@ class MyFormState extends State {
     }
   }
 
-  String typeProt = typeProtListRu[0]; //Тип протезирования / Prosthetics type
-  int isq =
-      65; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
-  int force = 25; //Динамометрическое усилие, н/см2 / Torque force, N/cm2
-  String typeFix = typeFixListRu[0]; // Тип фиксации / Fixation type
-  String typeBone = typeBoneListRu[0]; // Тип кости / Bone type
-  String classResorp =
-      classResorpListRu[0]; //Класс резорбции / Resorption class
-  String angle = angleListRu[0]; //Угол вкручивания / Screw angle
-
   //минимальное и максимальное значения для слайдеров с параметрами isq и force
   int isqMin = 50;
   int isqMax = 100;
   int forceMin = 15;
   int forceMax = 100;
 
+  String typeProt = (ruLocale == true ? typeProtListRu : typeProtListEng)[0]; //Тип протезирования / Prosthetics type
+  int isq =
+      50; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
+  int force = 15; //Динамометрическое усилие, н/см2 / Torque force, N/cm2
+  String typeFix = (ruLocale == true ? typeFixListRu : typeFixListEng)[0]; // Тип фиксации / Fixation type
+  String typeBone = (ruLocale == true ? typeBoneListRu : typeBoneListEng)[0]; // Тип кости / Bone type
+  String classResorp =
+    (ruLocale == true ? classResorpListRu : classResorpListEng)[0]; //Класс резорбции / Resorption class
+  String angle = (ruLocale == true ? angleListRu : angleListEng)[0]; //Угол вкручивания / Screw angle
+
+  void changeLocaleParameters() {
+    typeProt = (ruLocale == true ? typeProtListRu : typeProtListEng)[0];
+    typeFix = (ruLocale == true ? typeFixListRu : typeFixListEng)[0];
+    typeBone = (ruLocale == true ? typeBoneListRu : typeBoneListEng)[0];
+    classResorp = (ruLocale == true ? classResorpListRu : classResorpListEng)[0];
+    angle = (ruLocale == true ? angleListRu : angleListEng)[0];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.only(left : 10.0, right : 10.0, top : 10.0, bottom: 50.0),
         child: Form(
             key: _formKey,
             child: SingleChildScrollView(
               //прокрутка колонки
               child: Column(children: [
-              const Text("Тип протезирования",
+              Row(
+                children: [
+                  Text("eng"),
+                  SizedBox(width: 5),
+                  SizedBox(width: 20,
+                    child:
+                      SwitchListTile(
+                      value: ruLocale,
+                      onChanged: (bool value) {
+                      setState(() {
+                        ruLocale = value;
+                        changeLocaleParameters();
+                        changeLocaleTitle();
+                      });
+                    },
+                    activeColor: Colors.grey,
+                  )),
+                  SizedBox(width: 20),
+                  Text("ru"),
+              ]),
+              Text(ruLocale == true ? "Тип протезирования" : "Prosthetics type",
                   style:
                       TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
@@ -235,7 +271,7 @@ class MyFormState extends State {
                     typeProt = newValue!;
                   });
                 },
-                items: typeProtListRu.map((String value) {
+                items: (ruLocale == true ? typeProtListRu : typeProtListEng).map((String value) {
                   return DropdownMenuItem(
                     value: value,
                     child: Text(value),
@@ -245,7 +281,7 @@ class MyFormState extends State {
                 Padding(
                   padding: EdgeInsets.all(4),
                 ),
-              const Text("Коэффициент стабильности имплантанта (ISQ)",
+              Text(ruLocale == true ? "Коэффициент стабильности имплантанта (ISQ)" : "Implant Stability Quotient (ISQ)",
                 textAlign: TextAlign.center,
                 style:
                   TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
@@ -301,7 +337,7 @@ class MyFormState extends State {
                   ),
                 ],
               ),
-              const Text("Динамометрическое усилие, н/см2",
+              Text(ruLocale == true ? "Динамометрическое усилие, н/см2" : "Torque force, N / cm2",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
@@ -347,7 +383,7 @@ class MyFormState extends State {
                 Padding(
                   padding: EdgeInsets.all(4),
                 ),
-              const Text("Тип фиксации",
+              Text(ruLocale == true ? "Тип фиксации" : "Fixation type",
                   style:
                       TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
@@ -371,7 +407,7 @@ class MyFormState extends State {
                     typeFix = newValue!;
                   });
                 },
-                items: typeFixListRu.map((String value) {
+                items: (ruLocale == true ? typeFixListRu : typeFixListEng).map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -381,7 +417,7 @@ class MyFormState extends State {
                 Padding(
                   padding: EdgeInsets.all(4),
                 ),
-              const Text("Тип кости",
+              Text(ruLocale == true ? "Тип кости" : "Bone type",
                   style:
                       TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
@@ -405,7 +441,7 @@ class MyFormState extends State {
                     typeBone = newValue!;
                   });
                 },
-                items: typeBoneListRu.map((String value) {
+                items: (ruLocale == true ? typeBoneListRu : typeBoneListEng).map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -415,7 +451,7 @@ class MyFormState extends State {
                 Padding(
                   padding: EdgeInsets.all(4),
                 ),
-              const Text("Класс резорбции",
+              Text(ruLocale == true ? "Класс резорбции" : "Resorption class",
                   style:
                       TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
@@ -439,7 +475,7 @@ class MyFormState extends State {
                     classResorp = newValue!;
                   });
                 },
-                items: classResorpListRu.map((String value) {
+                items: (ruLocale == true ? classResorpListRu : classResorpListEng).map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -449,7 +485,7 @@ class MyFormState extends State {
                 Padding(
                   padding: EdgeInsets.all(4),
                 ),
-              const Text("Угол вкручивания",
+              Text(ruLocale == true ? "Угол вкручивания" : "Screw angle",
                   style:
                       TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
@@ -473,13 +509,15 @@ class MyFormState extends State {
                     angle = newValue!;
                   });
                 },
-                items: angleListRu.map((String value) {
+                items: (ruLocale == true ? angleListRu : angleListEng).map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
                   );
                 }).toList(),
               ),
+                SizedBox(height: 10),
+
             ]))));
   }
 }
