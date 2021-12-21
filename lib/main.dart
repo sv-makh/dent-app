@@ -102,7 +102,7 @@ void main() async {
       // поменялся цвет фона, шрифт, добавлена картинка
       appBar: AppBar(
           backgroundColor: Colors.white70,
-          leading: Image.asset("assets/images/icons8-tooth-50.png"),
+          leading: Image.asset("assets/icons/icons8.webp"),
           title: const Text("Стоматология",
               style: TextStyle(
                   fontFamily: 'RocknRollOne-Regular', color: Colors.black87)),
@@ -206,7 +206,7 @@ class MyFormState extends State {
               child: Column(children: [
               const Text("Тип протезирования",
                   style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
@@ -235,10 +235,13 @@ class MyFormState extends State {
                   );
                 }).toList(),
               ),
+                Padding(
+                  padding: EdgeInsets.all(4),
+                ),
               const Text("Коэффициент стабильности имплантанта (ISQ)",
                 textAlign: TextAlign.center,
                 style:
-                  TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                  TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
               )),
               Text("$isq",
@@ -294,7 +297,7 @@ class MyFormState extends State {
               const Text("Динамометрическое усилие, н/см2",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                     fontFamily: 'RocknRollOne-Regular')),
               Text("$force",
                 style: const TextStyle(
@@ -334,9 +337,12 @@ class MyFormState extends State {
                       color: Colors.amberAccent),
                   ),],
               ),
+                Padding(
+                  padding: EdgeInsets.all(4),
+                ),
               const Text("Тип фиксации",
                   style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
@@ -365,9 +371,12 @@ class MyFormState extends State {
                   );
                 }).toList(),
               ),
+                Padding(
+                  padding: EdgeInsets.all(4),
+                ),
               const Text("Тип кости",
                   style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
@@ -396,9 +405,12 @@ class MyFormState extends State {
                   );
                 }).toList(),
               ),
+                Padding(
+                  padding: EdgeInsets.all(4),
+                ),
               const Text("Класс резорбции",
                   style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
@@ -427,9 +439,12 @@ class MyFormState extends State {
                   );
                 }).toList(),
               ),
+                Padding(
+                  padding: EdgeInsets.all(4),
+                ),
               const Text("Угол вкручивания",
                   style:
-                      TextStyle(fontSize: 13, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
