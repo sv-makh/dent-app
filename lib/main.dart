@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dentapp/appLocalizationDelegate.dart';
+import 'package:dentapp/result.dart';
 import 'package:flutter/material.dart';
 // import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
@@ -101,102 +102,109 @@ Future _getParameters() async {
   }
 }
 
+//получения результата с сервера
+getResult() {}
+
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
-  AppLocalizationDelegate _localeOverrideDelegate =
-      AppLocalizationDelegate(Locale('en', 'US'));
-
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(localizationsDelegates: [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      _localeOverrideDelegate
-    ], supportedLocales: [
-      const Locale('en', 'US'),
-      const Locale('ru', 'RU')
-    ], home: MyHomePage());
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalization.of(context)!.heyWorld),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: ListTile(
-              leading: TextButton(
-                onPressed: () {
-                  setState(() {
-                    AppLocalization.load(Locale('en', 'US'));
-                  });
-                },
-                child: Text('ENGLISH'),
-              ),
-              trailing: TextButton(
-                onPressed: () {
-                  setState(() {
-                    AppLocalization.load(Locale('ru', 'Ru'));
-                  });
-                },
-                child: Text('Russian'),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              '',
-              style: TextStyle(fontSize: 20),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-//  {
-//   runApp(MaterialApp(
-//     supportedLocales: AppLocalizations.supportedLocales,
-//     localizationsDelegates: AppLocalizations.localizationsDelegates,
-//     home: Scaffold(
-//       // поменялся цвет фона, шрифт, добавлена картинка
-//       appBar: AppBar(
-//           backgroundColor: Colors.white70,
-//           leading: Image.asset("assets/images/icons8-tooth-50.png"),
-//           title: Text(
-//               //AppLocalizations.of(context)!.dentistry,
-//               "Стоматология",
-//               style: TextStyle(
-//                   fontFamily: 'RocknRollOne-Regular', color: Colors.black87)),
-//           centerTitle: true),
-
-//       //если данные для построения формы не были получены, показывается пустой экран
-//       //а если были - строится форма MyForm()
-//       body: connection == false ? Container() : MyForm(),
-//     ),
-//   ));
+// class MyApp extends StatefulWidget {
+//   @override
+//   State<StatefulWidget> createState() => _MyAppState();
 // }
+
+// class _MyAppState extends State<MyApp> {
+//   // This widget is the root of your application.
+//   AppLocalizationDelegate _localeOverrideDelegate =
+//       AppLocalizationDelegate(Locale('en', 'US'));
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return new MaterialApp(localizationsDelegates: [
+//       GlobalMaterialLocalizations.delegate,
+//       GlobalWidgetsLocalizations.delegate,
+//       _localeOverrideDelegate
+//     ], supportedLocales: [
+//       const Locale('en', 'US'),
+//       const Locale('ru', 'RU')
+//     ], home: MyHomePage());
+//   }
+// }
+
+// class MyHomePage extends StatefulWidget {
+//   @override
+//   State<StatefulWidget> createState() => _MyHomePageState();
+// }
+
+// class _MyHomePageState extends State<MyHomePage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//           //title: Text(AppLocalization.of(context)!.heyWorld),
+//           ),
+//       body: Column(
+//         mainAxisAlignment: MainAxisAlignment.start,
+//         children: <Widget>[
+//           Expanded(
+//             flex: 1,
+//             child: ListTile(
+//               leading: TextButton(
+//                 onPressed: () {
+//                   setState(() {
+//                     AppLocalization.load(Locale('en', 'US'));
+//                   });
+//                 },
+//                 child: Text('ENGLISH'),
+//               ),
+//               trailing: TextButton(
+//                 onPressed: () {
+//                   setState(() {
+//                     AppLocalization.load(Locale('ru', 'Ru'));
+//                   });
+//                 },
+//                 child: Text('Russian'),
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//             flex: 1,
+//             child: Text(
+//               AppLocalization.of(context)!.heyWorld,
+//               style: TextStyle(fontSize: 20),
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        home: Scaffold(
+          // поменялся цвет фона, шрифт, добавлена картинка
+          appBar: AppBar(
+              backgroundColor: Colors.white70,
+              leading: Image.asset("assets/images/icons8-tooth-50.png"),
+              title: Text(
+                  AppLocalizations.of(context)!.dentistry, //"Стоматология",
+                  style: TextStyle(
+                      fontFamily: 'RocknRollOne-Regular',
+                      color: Colors.black87)),
+              centerTitle: true),
+
+          //если данные для построения формы не были получены, показывается пустой экран
+          //а если были - строится форма MyForm()
+          body: connection == false ? Container() : MyForm(),
+        ));
+  }
+}
 
 class MyForm extends StatefulWidget {
   @override
@@ -444,6 +452,7 @@ class MyFormState extends State {
                 ),
               ])))),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
       // поменялся цвет фона, шрифт
       //если данные для построения формы не были получены
       //кнопка "Рассчитать" не показывается
@@ -454,14 +463,17 @@ class MyFormState extends State {
                   backgroundColor:
                       MaterialStateProperty.all<Color>(Colors.amber)),
               child: Text(
-                  //AppLocalizations.of(context)!.calculate,
-                  "Рассчитать",
+                  AppLocalizations.of(context)!.calculate, // "Рассчитать",
                   style: TextStyle(
                       fontFamily: 'RocknRollOne-Regular',
                       color: Colors.black87)),
               onPressed: () {
-                String message = "Данные успешно сохранены";
-                Color messageColor = Colors.green;
+                getResult();
+                ResultingRoute(
+                  result: '',
+                );
+                // String message = "Данные успешно сохранены";
+                // Color messageColor = Colors.green;
 
                 //   if (!_formKey.currentState!.validate() ||
                 //         !_feedDry && !_feedWet && !_feedNatural) {
