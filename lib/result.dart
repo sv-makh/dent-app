@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResultingRoute extends StatelessWidget {
   @override
@@ -15,7 +16,9 @@ class ResultingRoute extends StatelessWidget {
                 child: Column(
               children: [
                 Text(
-                  "Результаты расчета:",
+                  AppLocalizations.of(context)!
+                      .durationOfOrthopedicLoad, // "Срок ортопедической нагрузки (в сутках)",
+
                   style: TextStyle(
                       fontSize: 20.0,
                       color: Colors.green,
@@ -31,7 +34,9 @@ class ResultingRoute extends StatelessWidget {
                       //выход из приложения
                       SystemNavigator.pop();
                     },
-                    child: Text("Закрыть"))
+                    child: Text(
+                      AppLocalizations.of(context)!.close, // "Закрыть"
+                    ))
               ],
             ))));
   }
