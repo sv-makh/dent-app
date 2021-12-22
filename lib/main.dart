@@ -22,7 +22,16 @@ var typeBoneListEng = <String>[];
 var classResorpListEng = <String>[];
 var angleListEng = <String>[];
 
+//map, в которую собираются все выбранные пользователем параметры с формы
 var resultMap = Map<String, dynamic>();
+
+String resultStatus = "";
+
+//результат запроса на сервер со всеми параметрами формы
+String result = "";
+
+//сообщение с сервера, пришедшее вместе с результатом
+String resultMessage = "";
 
 //данные, полученные от API в ответ на get запрос
 DataFetch _dataFetch = DataFetch();
@@ -53,12 +62,22 @@ _getDataPost(resultMap) async {
   debugPrint("_getDataPost 2)");
   try {
     var dataDecoded = await _dataPost.getData();
-    if (dataDecoded != null) debugPrint(jsonEncode(dataDecoded));
+    if (dataDecoded != null) {
+      debugPrint(jsonEncode(dataDecoded));
+      resultStatus = dataDecoded["status"].toString();
+      result = dataDecoded["result"].toString();
+      resultMessage = utf8.decode(dataDecoded["message"].runes.toList());
+
+      debugPrint(resultStatus);
+      debugPrint(result);
+      debugPrint(resultMessage);
+    }
     else print("dataDecoded from post is null!");
   } catch (e) {
     debugPrint(e.toString());
   }
 }
+
 
 Map<String, dynamic> _getResultMap() {
   //открытие формы
@@ -148,8 +167,8 @@ changeLocaleTitle() {
 //удалось ли получить данные с сервера
 bool connection = true;
 
-//результат запроса на сервер со всеми параметрами формы
-String result = "";
+var txtController = TextEditingController();
+var txtControllerError = TextEditingController();
 
 void main() async {
 
@@ -218,9 +237,12 @@ class _MyAppState extends State<MyApp> {
               onPressed: () {
                 debugPrint("onPressed");
                 debugPrint(resultMap.toString());
-                resultMap = _getResultMap();
+                //resultMap = _getResultMap();
                 _getDataPost(resultMap);
-                debugPrint("onPressed");
+                setState(() {
+                  txtController.text = result;
+                  txtControllerError.text = resultMessage;
+                });
               },
             ),
     ),
@@ -272,6 +294,23 @@ class MyFormState extends State {
     typeBone = (ruLocale == true ? typeBoneListRu : typeBoneListEng)[0];
     classResorp = (ruLocale == true ? classResorpListRu : classResorpListEng)[0];
     angle = (ruLocale == true ? angleListRu : angleListEng)[0];
+  }
+
+  @override
+  void initState() {
+    //при первом открытии формы все параметры формы выставлены
+    //первым элементом соответствующего массива
+    //а для параметров isq&force выставлены минимальные значения
+    resultMap = {
+      "type_prot": 1.toString(),
+      "force": 15.toString(),
+      "isq": 50.toString(),
+      "type_fix": 1.toString(),
+      "type_bone": 1.toString(),
+      "class_resorb": "A",
+      "angle": 1.toString()
+    };
+    super.initState();
   }
 
   @override
@@ -537,7 +576,7 @@ class MyFormState extends State {
                   setState(() {
                     classResorp = newValue!;
                     //"class_resorp"
-                    resultMap[parameters[3]] = classResorp;
+                    resultMap["class_resorb"] = classResorp;
                   });
                 },
                 items: (ruLocale == true ? classResorpListRu : classResorpListEng).map((String value) {
@@ -584,6 +623,29 @@ class MyFormState extends State {
                 }).toList(),
               ),
                 SizedBox(height: 10),
+                Text(ruLocale == true ? "Срок ортопедической нагрузки (в сутках)" : "Duration of orthopedic load (days)",
+                    style:
+                    TextStyle(fontSize: 14,
+                        fontFamily: 'RocknRollOne-Regular',
+                        fontWeight: FontWeight.bold
+                    )),
+                Container(
+                  child: TextField(
+                    controller: txtController,
+                    style:
+                    TextStyle(fontSize: 14,
+                        fontFamily: 'RocknRollOne-Regular',
+                        fontWeight: FontWeight.bold),
+                ),
+                ),
+                resultStatus == "error" ? TextField(
+                  controller: txtControllerError,
+                  style:
+                    TextStyle(fontSize: 12,
+                    fontFamily: 'RocknRollOne-Regular'),
+                )
+                    : Container()
+
 
             ]))));
   }
