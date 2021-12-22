@@ -62,27 +62,30 @@ _getDataPost(resultMap) async {
 
 Map<String, dynamic> _getResultMap() {
   //открытие формы
-  /*if (resultMap.isEmpty) {
+  if (resultMap.isEmpty) {
     //при первом открытии формы все параметры формы выставлены
     //первым элементом соответствующего массива
-    for (var p in parameters) {
-      resultMap[p] = 1;
-    }
-    //для параметра "class_resorp" сервер принимает строковое значение
-    resultMap["class_resorp"] = 1;//"A";
-    //для параметров isq&force выставлены минимальные значения
-    resultMap["isq"] = 50;
-    resultMap["force"] = 15;
-  }*/
+    //а для параметров isq&force выставлены минимальные значения
   resultMap = {
-    "type_prot": 2.toString(),
+    "type_prot": 1.toString(),
     "force": 15.toString(),
     "isq": 50.toString(),
-    "type_fix": 2.toString(),
-    "type_bone": 4.toString(),
+    "type_fix": 1.toString(),
+    "type_bone": 1.toString(),
     "class_resorb": "A",
-    "angle": 2.toString()
+    "angle": 1.toString()
   };
+    //для параметров isq&force выставлены минимальные значения
+  }
+  /*resultMap = {
+    "type_prot": 1.toString(),
+    "force": 15.toString(),
+    "isq": 50.toString(),
+    "type_fix": 1.toString(),
+    "type_bone": 1.toString(),
+    "class_resorb": "A",
+    "angle": 1.toString()
+  };*/
   debugPrint(resultMap.toString());
   return resultMap;
 }
@@ -213,7 +216,9 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               onPressed: () {
-                var resultMap = _getResultMap();
+                debugPrint("onPressed");
+                debugPrint(resultMap.toString());
+                resultMap = _getResultMap();
                 _getDataPost(resultMap);
                 debugPrint("onPressed");
               },
@@ -232,16 +237,17 @@ class MyFormState extends State {
 
   void _getForceParameter(int isq) async {
   //значения для тестирования
-  //  forceMin = 100 - isq;
-  //  forceMax = 100 + isq;
-  //  force = forceMin;
-    try {
+    forceMin = 100 - isq;
+    if (forceMin < 15) forceMin = 15;
+    forceMax = 100;
+    force = forceMin;
+  /*  try {
       var dataDecoded = await _dataFetch.getData("isq");
       if (dataDecoded != null) debugPrint(jsonEncode(dataDecoded));
       else debugPrint("dataDecoded is null!");
     } catch (e) {
       debugPrint(e.toString());
-    }
+    }*/
   }
 
   //минимальное и максимальное значения для слайдеров с параметрами isq и force
@@ -319,6 +325,7 @@ class MyFormState extends State {
                 onChanged: (String? newValue) {
                   setState(() {
                     typeProt = newValue!;
+                    resultMap[parameters[0]] = 1 + (ruLocale == true ? typeProtListRu : typeProtListEng).indexOf(typeProt);
                   });
                 },
                 items: (ruLocale == true ? typeProtListRu : typeProtListEng).map((String value) {
@@ -375,6 +382,8 @@ class MyFormState extends State {
                         setState(() {
                           isq = value.toInt();
                           _getForceParameter(isq);
+                          resultMap["isq"] = isq;
+                          resultMap["force"] = force;
                         });
                       },
                     ),
@@ -455,6 +464,8 @@ class MyFormState extends State {
                 onChanged: (String? newValue) {
                   setState(() {
                     typeFix = newValue!;
+                    //"type_fix"
+                    resultMap[parameters[1]] = 1 + (ruLocale == true ? typeFixListRu : typeFixListEng).indexOf(typeFix);
                   });
                 },
                 items: (ruLocale == true ? typeFixListRu : typeFixListEng).map((String value) {
@@ -489,6 +500,8 @@ class MyFormState extends State {
                 onChanged: (String? newValue) {
                   setState(() {
                     typeBone = newValue!;
+                    //"type_bone"
+                    resultMap[parameters[2]] = 1 + (ruLocale == true ? typeBoneListRu : typeBoneListEng).indexOf(typeBone);
                   });
                 },
                 items: (ruLocale == true ? typeBoneListRu : typeBoneListEng).map((String value) {
@@ -523,6 +536,8 @@ class MyFormState extends State {
                 onChanged: (String? newValue) {
                   setState(() {
                     classResorp = newValue!;
+                    //"class_resorp"
+                    resultMap[parameters[3]] = classResorp;
                   });
                 },
                 items: (ruLocale == true ? classResorpListRu : classResorpListEng).map((String value) {
@@ -557,6 +572,8 @@ class MyFormState extends State {
                 onChanged: (String? newValue) {
                   setState(() {
                     angle = newValue!;
+                    //"angle"
+                    resultMap[parameters[4]] = 1 + (ruLocale == true ? angleListRu : angleListEng).indexOf(angle);
                   });
                 },
                 items: (ruLocale == true ? angleListRu : angleListEng).map((String value) {
