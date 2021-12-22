@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
+import 'package:dentapp/helpers/data_post.dart';
 import 'package:dentapp/helpers/app_properties_bloc.dart';
 
 //массивы терминов для выпадающих списков на русском
@@ -21,7 +22,9 @@ var typeBoneListEng = <String>[];
 var classResorpListEng = <String>[];
 var angleListEng = <String>[];
 
-//данные, полученные от API
+var resultMap = Map<String, dynamic>();
+
+//данные, полученные от API в ответ на get запрос
 DataFetch _dataFetch = DataFetch();
 
 //массив параметров формы с выпадающими списками
@@ -41,6 +44,47 @@ _getData(name) async {
   //} catch (e) {
   //  debugPrint(e.toString());
   //}
+}
+
+_getDataPost(resultMap) async {
+  debugPrint("_getDataPost 1)");
+  //данные, полученные от API в ответ на post запрос
+  DataPost _dataPost = DataPost(resultMap);
+  debugPrint("_getDataPost 2)");
+  try {
+    var dataDecoded = await _dataPost.getData();
+    if (dataDecoded != null) debugPrint(jsonEncode(dataDecoded));
+    else print("dataDecoded from post is null!");
+  } catch (e) {
+    debugPrint(e.toString());
+  }
+}
+
+Map<String, dynamic> _getResultMap() {
+  //открытие формы
+  /*if (resultMap.isEmpty) {
+    //при первом открытии формы все параметры формы выставлены
+    //первым элементом соответствующего массива
+    for (var p in parameters) {
+      resultMap[p] = 1;
+    }
+    //для параметра "class_resorp" сервер принимает строковое значение
+    resultMap["class_resorp"] = 1;//"A";
+    //для параметров isq&force выставлены минимальные значения
+    resultMap["isq"] = 50;
+    resultMap["force"] = 15;
+  }*/
+  resultMap = {
+    "type_prot": 2.toString(),
+    "force": 15.toString(),
+    "isq": 50.toString(),
+    "type_fix": 2.toString(),
+    "type_bone": 4.toString(),
+    "class_resorb": "A",
+    "angle": 2.toString()
+  };
+  debugPrint(resultMap.toString());
+  return resultMap;
 }
 
 //заполнение массивов терминов данными из API для определённого параметра name
@@ -100,6 +144,9 @@ changeLocaleTitle() {
 
 //удалось ли получить данные с сервера
 bool connection = true;
+
+//результат запроса на сервер со всеми параметрами формы
+String result = "";
 
 void main() async {
 
@@ -166,6 +213,9 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               onPressed: () {
+                var resultMap = _getResultMap();
+                _getDataPost(resultMap);
+                debugPrint("onPressed");
               },
             ),
     ),
