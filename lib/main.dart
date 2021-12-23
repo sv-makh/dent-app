@@ -153,12 +153,13 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
+/*class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> {*/
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -199,7 +200,10 @@ class MyFormState extends State {
     if (forceMin < 15) forceMin = 15;
     forceMax = 100;
     force = forceMin;
-    if (isq == 50) force = 15;
+    if (isq == 50) {
+      forceMin = 15;
+      force = 15;
+    }
     /*  try {
       var dataDecoded = await _dataFetch.getData("isq");
       if (dataDecoded != null) debugPrint(jsonEncode(dataDecoded));
@@ -283,9 +287,9 @@ class MyFormState extends State {
           //, bottom: 50.0),
           child: Form(
               key: _formKey,
+              //прокрутка колонки
               child: SingleChildScrollView(
-                  //прокрутка колонки
-                  child: Column(children: [
+                child: Column(children: [
                 Text(
                     ruLocale == true
                         ? "Тип протезирования"
@@ -325,7 +329,7 @@ class MyFormState extends State {
                   }).toList(),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(3),
                 ),
                 Text(
                     ruLocale == true
@@ -336,6 +340,9 @@ class MyFormState extends State {
                       fontSize: 14, fontWeight: FontWeight.bold,
                       // поменялся шрифт
                     )),
+                Padding(
+                  padding: EdgeInsets.all(1),
+                ),
                 Text(
                   "$isq",
                   style: const TextStyle(
@@ -392,6 +399,9 @@ class MyFormState extends State {
                     ),
                   ],
                 ),
+                Padding(
+                  padding: EdgeInsets.all(3),
+                ),
                 Text(
                     ruLocale == true
                         ? "Динамометрическое усилие, н/см2"
@@ -399,6 +409,9 @@ class MyFormState extends State {
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                Padding(
+                  padding: EdgeInsets.all(1),
+                ),
                 Text(
                   "$force",
                   style: const TextStyle(
@@ -418,6 +431,7 @@ class MyFormState extends State {
                     Expanded(
                       child: SliderTheme(
                         data: SliderThemeData(
+                          overlayShape: RoundSliderOverlayShape(overlayRadius: 0),
                           activeTrackColor: Colors.amber,
                           inactiveTrackColor: Colors.amberAccent,
                           thumbColor: Colors.amber,
@@ -443,7 +457,7 @@ class MyFormState extends State {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(3),
                 ),
                 Text(ruLocale == true ? "Тип фиксации" : "Fixation type",
                     style: TextStyle(
@@ -482,7 +496,7 @@ class MyFormState extends State {
                   }).toList(),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(3),
                 ),
                 Text(ruLocale == true ? "Тип кости" : "Bone type",
                     style: TextStyle(
@@ -521,7 +535,7 @@ class MyFormState extends State {
                   }).toList(),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(3),
                 ),
                 Text(ruLocale == true ? "Класс резорбции" : "Resorption class",
                     style: TextStyle(
@@ -560,7 +574,7 @@ class MyFormState extends State {
                   }).toList(),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(3),
                 ),
                 Text(ruLocale == true ? "Угол вкручивания" : "Screw angle",
                     style: TextStyle(
@@ -598,50 +612,75 @@ class MyFormState extends State {
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 10),
-                Text(
-                    ruLocale == true
-                        ? "Срок ортопедической нагрузки (в сутках)"
-                        : "Duration of orthopedic load (days)",
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'RocknRollOne-Regular',
-                        fontWeight: FontWeight.bold)),
-                Text("$resultTxt",
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                resultStatus == "error"
-                    ? Text("$resultMsgTxt", style: TextStyle(fontSize: 14))
-                    : Container()
+                SizedBox(height: 5),
+                _showResult()
               ]))),
         ),
         Expanded(
           child: Row(
             children: [
-              ElevatedButton(
-                onPressed: (() {
-                  debugPrint("onPressed");
-                  debugPrint(resultMap.toString());
-                  _getDataPost(resultMap).then((_) {
-                    setState(() {
-                      resultTxt = result;
-                      resultMsgTxt = resultMessage;
-                    });
-                  });
-                }),
-                child: Text(ruLocale == true ? "Рассчитать" : "Calculate",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black87)),
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.amber, fixedSize: Size(120.0, 28.0)
-                    ),
-              ),
+              _buttonCalculate(),
               _langSwitch()
             ],
             mainAxisAlignment: MainAxisAlignment.spaceAround,
           ),
         )
       ],
+    );
+  }
+
+  Widget _showResult() {
+    return Container(
+      child: Column(children: [
+        Container(
+          height: 38.0,
+          width: 300.0,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.amber, width: 2.0)
+          ),
+          child: Column(
+            children :[
+              Text(
+                ruLocale == true
+                  ? "Срок ортопедической нагрузки (в сутках)"
+                  : "Duration of orthopedic load (days)",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold)),
+              Text("$resultTxt",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold))
+            ])
+        ),
+        resultStatus == "error"
+            ? Container(
+                height: 38.0,
+                width: 300.0,
+                child: Text("$resultMsgTxt", style: TextStyle(fontSize: 14)))
+            : Container()
+      ],)
+    );
+  }
+
+  Widget _buttonCalculate() {
+    return ElevatedButton(
+      onPressed: (() {
+        debugPrint("onPressed");
+        debugPrint(resultMap.toString());
+        _getDataPost(resultMap).then((_) {
+          setState(() {
+            resultTxt = result;
+            resultMsgTxt = resultMessage;
+          });
+        });
+      }),
+      child: Text(ruLocale == true ? "Рассчитать" : "Calculate",
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.black87)),
+      style: ElevatedButton.styleFrom(
+          primary: Colors.amber, fixedSize: Size(120.0, 28.0)
+      ),
     );
   }
 
