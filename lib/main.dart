@@ -290,6 +290,16 @@ class MyFormState extends State {
   @override
   Widget build(BuildContext context) {
     return Column(children: [Container(
+      decoration: BoxDecoration(
+      color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 3,
+            blurRadius: 10,
+          ),
+        ],
+      ),
       height: MediaQuery.of(context).size.height - 130,
         padding: const EdgeInsets.only(left : 10.0, right : 10.0, top : 10.0),//, bottom: 50.0),
         child: Form(
