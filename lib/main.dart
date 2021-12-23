@@ -71,42 +71,11 @@ _getDataPost(resultMap) async {
       debugPrint(resultStatus);
       debugPrint(result);
       debugPrint(resultMessage);
-    }
-    else print("dataDecoded from post is null!");
+    } else
+      print("dataDecoded from post is null!");
   } catch (e) {
     debugPrint(e.toString());
   }
-}
-
-
-Map<String, dynamic> _getResultMap() {
-  //открытие формы
-  if (resultMap.isEmpty) {
-    //при первом открытии формы все параметры формы выставлены
-    //первым элементом соответствующего массива
-    //а для параметров isq&force выставлены минимальные значения
-  resultMap = {
-    "type_prot": 1.toString(),
-    "force": 15.toString(),
-    "isq": 50.toString(),
-    "type_fix": 1.toString(),
-    "type_bone": 1.toString(),
-    "class_resorb": "A",
-    "angle": 1.toString()
-  };
-    //для параметров isq&force выставлены минимальные значения
-  }
-  /*resultMap = {
-    "type_prot": 1.toString(),
-    "force": 15.toString(),
-    "isq": 50.toString(),
-    "type_fix": 1.toString(),
-    "type_bone": 1.toString(),
-    "class_resorb": "A",
-    "angle": 1.toString()
-  };*/
-  debugPrint(resultMap.toString());
-  return resultMap;
 }
 
 //заполнение массивов терминов данными из API для определённого параметра name
@@ -156,12 +125,8 @@ Future _getParameters() async {
 String defaultLocale = Platform.localeName;
 bool ruLocale = true;
 
-String titleApp = "";//ruLocale == true ? "Стоматология" : "Stomatology";
-String titleButton = "";//ruLocale == true ? "Рассчитать" : "Calculate";
-
 changeLocaleTitle() {
   appBloc.updateTitle(ruLocale == true ? "Стоматология" : "Stomatology");
-  appBloc.updateTitleButton(ruLocale == true ? "Рассчитать" : "Calculate");
 }
 
 //удалось ли получить данные с сервера
@@ -171,7 +136,6 @@ var txtController = TextEditingController();
 var txtControllerError = TextEditingController();
 
 void main() async {
-
   try {
     //получение данных для выпадающих списков (до построения формы)
     await _getParameters();
@@ -198,30 +162,28 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    home: Scaffold(
-      // поменялся цвет фона, шрифт, добавлена картинка
-      appBar: AppBar(
+      home: Scaffold(
+        // поменялся цвет фона, шрифт, добавлена картинка
+        appBar: AppBar(
           backgroundColor: Colors.white70,
           leading: Image.asset("assets/icons/icons8.webp"),
-          title:StreamBuilder<Object>(
-            stream: appBloc.titleStream,
-            initialData: ruLocale == true ? "Стоматология" : "Stomatology",
-            builder: (context, snapshot) {
-              return Text(snapshot.data.toString(),
-                style: TextStyle(fontWeight: FontWeight.bold,
-                    color: Colors.black87));
-            }
-          ),
-        centerTitle: true,
+          title: StreamBuilder<Object>(
+              stream: appBloc.titleStream,
+              initialData: ruLocale == true ? "Стоматология" : "Stomatology",
+              builder: (context, snapshot) {
+                return Text(snapshot.data.toString(),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black87));
+              }),
+          centerTitle: true,
+        ),
+        //если данные для построения формы не были получены, показывается пустой экран
+        //а если были - строится форма MyForm()
+        body: connection == false ? Container() : MyForm(),
       ),
-      //если данные для построения формы не были получены, показывается пустой экран
-      //а если были - строится форма MyForm()
-      body: connection == false ? Container() : MyForm(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-    ),
-  );
-}}
+    );
+  }
+}
 
 class MyForm extends StatefulWidget {
   @override
@@ -232,12 +194,13 @@ class MyFormState extends State {
   final _formKey = GlobalKey<FormState>();
 
   void _getForceParameter(int isq) async {
-  //значения для тестирования
+    //значения для тестирования
     forceMin = 100 - isq;
     if (forceMin < 15) forceMin = 15;
     forceMax = 100;
     force = forceMin;
-  /*  try {
+    if (isq == 50) force = 15;
+    /*  try {
       var dataDecoded = await _dataFetch.getData("isq");
       if (dataDecoded != null) debugPrint(jsonEncode(dataDecoded));
       else debugPrint("dataDecoded is null!");
@@ -252,21 +215,34 @@ class MyFormState extends State {
   int forceMin = 15;
   int forceMax = 100;
 
-  String typeProt = (ruLocale == true ? typeProtListRu : typeProtListEng)[0]; //Тип протезирования / Prosthetics type
+  String typeProt = (ruLocale == true
+      ? typeProtListRu
+      : typeProtListEng)[0]; //Тип протезирования / Prosthetics type
   int isq =
       50; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
   int force = 15; //Динамометрическое усилие, н/см2 / Torque force, N/cm2
-  String typeFix = (ruLocale == true ? typeFixListRu : typeFixListEng)[0]; // Тип фиксации / Fixation type
-  String typeBone = (ruLocale == true ? typeBoneListRu : typeBoneListEng)[0]; // Тип кости / Bone type
-  String classResorp =
-    (ruLocale == true ? classResorpListRu : classResorpListEng)[0]; //Класс резорбции / Resorption class
-  String angle = (ruLocale == true ? angleListRu : angleListEng)[0]; //Угол вкручивания / Screw angle
+  String typeFix = (ruLocale == true
+      ? typeFixListRu
+      : typeFixListEng)[0]; // Тип фиксации / Fixation type
+  String typeBone = (ruLocale == true
+      ? typeBoneListRu
+      : typeBoneListEng)[0]; // Тип кости / Bone type
+  String classResorp = (ruLocale == true
+      ? classResorpListRu
+      : classResorpListEng)[0]; //Класс резорбции / Resorption class
+  String angle = (ruLocale == true
+      ? angleListRu
+      : angleListEng)[0]; //Угол вкручивания / Screw angle
+
+  String resultTxt = "";
+  String resultMsgTxt = "";
 
   void changeLocaleParameters() {
     typeProt = (ruLocale == true ? typeProtListRu : typeProtListEng)[0];
     typeFix = (ruLocale == true ? typeFixListRu : typeFixListEng)[0];
     typeBone = (ruLocale == true ? typeBoneListRu : typeBoneListEng)[0];
-    classResorp = (ruLocale == true ? classResorpListRu : classResorpListEng)[0];
+    classResorp =
+        (ruLocale == true ? classResorpListRu : classResorpListEng)[0];
     angle = (ruLocale == true ? angleListRu : angleListEng)[0];
   }
 
@@ -289,384 +265,405 @@ class MyFormState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [Container(
-      decoration: BoxDecoration(
-      color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 3,
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      height: MediaQuery.of(context).size.height - 130,
-        padding: const EdgeInsets.only(left : 10.0, right : 10.0, top : 10.0),//, bottom: 50.0),
-        child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              //прокрутка колонки
-              child: Column(children: [
-              Text(ruLocale == true ? "Тип протезирования" : "Prosthetics type",
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
-                      )),
-              DropdownButton<String>(
-                value: typeProt,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    typeProt = newValue!;
-                    resultMap[parameters[0]] = 1 + (ruLocale == true ? typeProtListRu : typeProtListEng).indexOf(typeProt);
-                  });
-                },
-                items: (ruLocale == true ? typeProtListRu : typeProtListEng).map((String value) {
-                  return DropdownMenuItem(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 3,
+                blurRadius: 10,
               ),
+            ],
+          ),
+          height: MediaQuery.of(context).size.height - 130,
+          padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+          //, bottom: 50.0),
+          child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                  //прокрутка колонки
+                  child: Column(children: [
+                Text(
+                    ruLocale == true
+                        ? "Тип протезирования"
+                        : "Prosthetics type",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    )),
+                DropdownButton<String>(
+                  value: typeProt,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      typeProt = newValue!;
+                      resultMap[parameters[0]] = 1 +
+                          (ruLocale == true ? typeProtListRu : typeProtListEng)
+                              .indexOf(typeProt);
+                    });
+                  },
+                  items: (ruLocale == true ? typeProtListRu : typeProtListEng)
+                      .map((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
                 Padding(
                   padding: EdgeInsets.all(1),
                 ),
-              Text(ruLocale == true ? "Коэффициент стабильности имплантанта (ISQ)" : "Implant Stability Quotient (ISQ)",
-                textAlign: TextAlign.center,
-                style:
-                  TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
-                          // поменялся шрифт
-              )),
-              Text("$isq",
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.cyan),
-              ),
-              Row(
-                children: [
-                  Text("$isqMin",
+                Text(
+                    ruLocale == true
+                        ? "Коэффициент стабильности имплантанта (ISQ)"
+                        : "Implant Stability Quotient (ISQ)",
+                    textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold,
+                      // поменялся шрифт
+                    )),
+                Text(
+                  "$isq",
+                  style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent),
-                  ),
-                  Expanded(
-                    child: SliderTheme(
-                    data: SliderThemeData(
-                      overlayShape: RoundSliderOverlayShape(overlayRadius: 0),
-                      activeTrackColor: Colors.amber,
-                      inactiveTrackColor: Colors.amberAccent,
-                      thumbColor: Colors.amber,
-                      // добавилась SliderTheme, чтобы поменялся цвет
+                      color: Colors.cyan),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "$isqMin",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amberAccent),
                     ),
-                    child: Slider(
-                      value: isq.toDouble(),
-                      min: isqMin.toDouble(),
-                      max: isqMax.toDouble(),
-                      divisions: 100,
-                      label: isq.round().toString(),
-                      //изменять isq пока пользователь двигает слайдер
-                      onChanged: (value) {
-                        setState(() => isq = value.toInt());
-                      },
-                      //изменять зависимый параметр force только когда
-                      //пользователь прекратил двигать слайдер
-                      onChangeEnd: (value) {
-                        setState(() {
-                          isq = value.toInt();
-                          _getForceParameter(isq);
-                          resultMap["isq"] = isq;
-                          resultMap["force"] = force;
-                        });
-                      },
-                    ),
-                  )),
-                  Text("$isqMax",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent),
-                  ),
-                ],
-              ),
-              Text(ruLocale == true ? "Динамометрическое усилие, н/см2" : "Torque force, N / cm2",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                    fontWeight: FontWeight.bold)),
-              Text("$force",
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.cyan),
-              ),
-              Row(
-                children: [
-                  Text("$forceMin",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent),
-                   ),
-                  Expanded(child: SliderTheme(
-                    data: SliderThemeData(
-                      activeTrackColor: Colors.amber,
-                      inactiveTrackColor: Colors.amberAccent,
-                      thumbColor: Colors.amber,
+                    Expanded(
+                        child: SliderTheme(
+                      data: SliderThemeData(
+                        overlayShape: RoundSliderOverlayShape(overlayRadius: 0),
+                        activeTrackColor: Colors.amber,
+                        inactiveTrackColor: Colors.amberAccent,
+                        thumbColor: Colors.amber,
+                        // добавилась SliderTheme, чтобы поменялся цвет
                       ),
-                    child: Slider(
-                      value: force.toDouble(),
-                      min: forceMin.toDouble(),
-                      max: forceMax.toDouble(),
-                      divisions: forceMax - forceMin,
-                      label: force.round().toString(),
-                      onChanged: (value) {
-                        //setState(() => force = value.toInt());
-                      }
+                      child: Slider(
+                        value: isq.toDouble(),
+                        min: isqMin.toDouble(),
+                        max: isqMax.toDouble(),
+                        divisions: 100,
+                        label: isq.round().toString(),
+                        //изменять isq пока пользователь двигает слайдер
+                        onChanged: (value) {
+                          setState(() => isq = value.toInt());
+                        },
+                        //изменять зависимый параметр force только когда
+                        //пользователь прекратил двигать слайдер
+                        onChangeEnd: (value) {
+                          setState(() {
+                            isq = value.toInt();
+                            _getForceParameter(isq);
+                            resultMap["isq"] = isq;
+                            resultMap["force"] = force;
+                          });
+                        },
+                      ),
+                    )),
+                    Text(
+                      "$isqMax",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amberAccent),
                     ),
-                  ),),
-                  Text("$forceMax",
+                  ],
+                ),
+                Text(
+                    ruLocale == true
+                        ? "Динамометрическое усилие, н/см2"
+                        : "Torque force, N / cm2",
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                Text(
+                  "$force",
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.cyan),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "$forceMin",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amberAccent),
+                    ),
+                    Expanded(
+                      child: SliderTheme(
+                        data: SliderThemeData(
+                          activeTrackColor: Colors.amber,
+                          inactiveTrackColor: Colors.amberAccent,
+                          thumbColor: Colors.amber,
+                        ),
+                        child: Slider(
+                            value: force.toDouble(),
+                            min: forceMin.toDouble(),
+                            max: forceMax.toDouble(),
+                            divisions: forceMax - forceMin,
+                            label: force.round().toString(),
+                            onChanged: (value) {
+                              //setState(() => force = value.toInt());
+                            }),
+                      ),
+                    ),
+                    Text(
+                      "$forceMax",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amberAccent),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.all(1),
+                ),
+                Text(ruLocale == true ? "Тип фиксации" : "Fixation type",
+                    style: TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold,
+                      // поменялся шрифт
+                    )),
+                DropdownButton<String>(
+                  value: typeFix,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      typeFix = newValue!;
+                      //"type_fix"
+                      resultMap[parameters[1]] = 1 +
+                          (ruLocale == true ? typeFixListRu : typeFixListEng)
+                              .indexOf(typeFix);
+                    });
+                  },
+                  items: (ruLocale == true ? typeFixListRu : typeFixListEng)
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(1),
+                ),
+                Text(ruLocale == true ? "Тип кости" : "Bone type",
+                    style: TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold,
+                      // поменялся шрифт
+                    )),
+                DropdownButton<String>(
+                  value: typeBone,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      typeBone = newValue!;
+                      //"type_bone"
+                      resultMap[parameters[2]] = 1 +
+                          (ruLocale == true ? typeBoneListRu : typeBoneListEng)
+                              .indexOf(typeBone);
+                    });
+                  },
+                  items: (ruLocale == true ? typeBoneListRu : typeBoneListEng)
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(1),
+                ),
+                Text(ruLocale == true ? "Класс резорбции" : "Resorption class",
+                    style: TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold,
+                      // поменялся шрифт
+                    )),
+                DropdownButton<String>(
+                  value: classResorp,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      classResorp = newValue!;
+                      //"class_resorp"
+                      resultMap["class_resorb"] = classResorp;
+                    });
+                  },
+                  items: (ruLocale == true
+                          ? classResorpListRu
+                          : classResorpListEng)
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(1),
+                ),
+                Text(ruLocale == true ? "Угол вкручивания" : "Screw angle",
+                    style: TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold,
+                      // поменялся шрифт
+                    )),
+                DropdownButton<String>(
+                  value: angle,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.cyan),
+                  // поменялся цвет фона, шрифт
+                  underline: Container(
+                    height: 2,
+                    color: Colors.cyan,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      angle = newValue!;
+                      //"angle"
+                      resultMap[parameters[4]] = 1 +
+                          (ruLocale == true ? angleListRu : angleListEng)
+                              .indexOf(angle);
+                    });
+                  },
+                  items: (ruLocale == true ? angleListRu : angleListEng)
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 10),
+                Text(
+                    ruLocale == true
+                        ? "Срок ортопедической нагрузки (в сутках)"
+                        : "Duration of orthopedic load (days)",
                     style: TextStyle(
                         fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent),
-                  ),],
-              ),
-                Padding(
-                  padding: EdgeInsets.all(1),
-                ),
-              Text(ruLocale == true ? "Тип фиксации" : "Fixation type",
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: typeFix,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    typeFix = newValue!;
-                    //"type_fix"
-                    resultMap[parameters[1]] = 1 + (ruLocale == true ? typeFixListRu : typeFixListEng).indexOf(typeFix);
-                  });
-                },
-                items: (ruLocale == true ? typeFixListRu : typeFixListEng).map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-                Padding(
-                  padding: EdgeInsets.all(1),
-                ),
-              Text(ruLocale == true ? "Тип кости" : "Bone type",
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: typeBone,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    typeBone = newValue!;
-                    //"type_bone"
-                    resultMap[parameters[2]] = 1 + (ruLocale == true ? typeBoneListRu : typeBoneListEng).indexOf(typeBone);
-                  });
-                },
-                items: (ruLocale == true ? typeBoneListRu : typeBoneListEng).map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-                Padding(
-                  padding: EdgeInsets.all(1),
-                ),
-              Text(ruLocale == true ? "Класс резорбции" : "Resorption class",
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: classResorp,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    classResorp = newValue!;
-                    //"class_resorp"
-                    resultMap["class_resorb"] = classResorp;
-                  });
-                },
-                items: (ruLocale == true ? classResorpListRu : classResorpListEng).map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-                Padding(
-                  padding: EdgeInsets.all(1),
-                ),
-              Text(ruLocale == true ? "Угол вкручивания" : "Screw angle",
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
-                          // поменялся шрифт
-                          )),
-              DropdownButton<String>(
-                value: angle,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.cyan),
-                // поменялся цвет фона, шрифт
-                underline: Container(
-                  height: 2,
-                  color: Colors.cyan,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    angle = newValue!;
-                    //"angle"
-                    resultMap[parameters[4]] = 1 + (ruLocale == true ? angleListRu : angleListEng).indexOf(angle);
-                  });
-                },
-                items: (ruLocale == true ? angleListRu : angleListEng).map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-                SizedBox(height: 10),
-                Text(ruLocale == true ? "Срок ортопедической нагрузки (в сутках)" : "Duration of orthopedic load (days)",
-                    style:
-                    TextStyle(fontSize: 14,
                         fontFamily: 'RocknRollOne-Regular',
-                        fontWeight: FontWeight.bold
-                    )),
-                Container(
-                  child: TextField(
-                    controller: txtController,
+                        fontWeight: FontWeight.bold)),
+                Text("$resultTxt",
                     style:
-                    TextStyle(fontSize: 14,
-                        fontFamily: 'RocknRollOne-Regular',
-                        fontWeight: FontWeight.bold),
-                ),
-                ),
-                resultStatus == "error" ? TextField(
-                  controller: txtControllerError,
-                  style:
-                    TextStyle(fontSize: 12,
-                    fontFamily: 'RocknRollOne-Regular'),
-                )
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                resultStatus == "error"
+                    ? Text("$resultMsgTxt", style: TextStyle(fontSize: 14))
                     : Container()
-
-
-            ])
-            )
+              ]))),
         ),
-    ),
-      Expanded(
-      child: Row(children: [
-      ElevatedButton(
-        onPressed: ((){
-          debugPrint("onPressed");
-          debugPrint(resultMap.toString());
-          //resultMap = _getResultMap();
-          _getDataPost(resultMap);
-          setState(() {
-            txtController.text = result;
-            txtControllerError.text = resultMessage;
-          });
-        }),
-        child: Text(ruLocale == true ? "Рассчитать" : "Calculate",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)),
-        style: ElevatedButton.styleFrom(
-          primary: Colors.amber,
-          fixedSize: Size(120.0, 28.0)
-          //ButtonStyle(
-          //backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),
-        ),
-      ),
-      _langSwitch()
+        Expanded(
+          child: Row(
+            children: [
+              ElevatedButton(
+                onPressed: (() {
+                  debugPrint("onPressed");
+                  debugPrint(resultMap.toString());
+                  _getDataPost(resultMap).then((_) {
+                    setState(() {
+                      resultTxt = result;
+                      resultMsgTxt = resultMessage;
+                    });
+                  });
+                }),
+                child: Text(ruLocale == true ? "Рассчитать" : "Calculate",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black87)),
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.amber, fixedSize: Size(120.0, 28.0)
+                    ),
+              ),
+              _langSwitch()
+            ],
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          ),
+        )
       ],
-      mainAxisAlignment: MainAxisAlignment.spaceAround,),
-      )
-    ],
     );
   }
 
   Widget _langSwitch() {
-    return Row(
-      children: [
-        Text("eng"),
-        SizedBox(width: 5),
-        SizedBox(width: 20,
-          child:
-            SwitchListTile(
-              value: ruLocale,
-              onChanged: (bool value) {
-                setState(() {
-                  ruLocale = value;
-                  changeLocaleParameters();
-                  changeLocaleTitle();
-                });
-              },
-              activeColor: Colors.grey,
-            )),
-        SizedBox(width: 20),
-        Text("ru"),
-      ]
-    );
+    return Row(children: [
+      Text("eng"),
+      SizedBox(width: 5),
+      SizedBox(
+          width: 20,
+          child: SwitchListTile(
+            value: ruLocale,
+            onChanged: (bool value) {
+              setState(() {
+                ruLocale = value;
+                changeLocaleParameters();
+                changeLocaleTitle();
+              });
+            },
+            activeColor: Colors.grey,
+          )),
+      SizedBox(width: 20),
+      Text("ru"),
+    ]);
   }
 }
