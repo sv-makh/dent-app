@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
@@ -139,7 +140,8 @@ class _MyAppState extends State<MyApp> {
             initialData: ruLocale == true ? "Стоматология" : "Stomatology",
             builder: (context, snapshot) {
               return Text(snapshot.data.toString(),
-                style: TextStyle(fontFamily: 'RocknRollOne-Regular', color: Colors.black87));
+                style: TextStyle(fontWeight: FontWeight.bold,
+                    color: Colors.black87));
             }
           ),
         centerTitle: true,
@@ -162,7 +164,7 @@ class _MyAppState extends State<MyApp> {
                 initialData: ruLocale == true ? "Рассчитать" : "Calculate",
                 builder: (context, snapshot) {
                   return Text(snapshot.data.toString(),
-                    style: TextStyle(fontFamily: 'RocknRollOne-Regular', color: Colors.black87));
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87));
                 },
               ),
               onPressed: () {
@@ -249,17 +251,16 @@ class MyFormState extends State {
               ]),
               Text(ruLocale == true ? "Тип протезирования" : "Prosthetics type",
                   style:
-                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
-                          // поменялся шрифт
-                          )),
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
+                      )),
               DropdownButton<String>(
                 value: typeProt,
                 icon: const Icon(Icons.arrow_downward),
                 iconSize: 24,
                 elevation: 16,
                 style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                     color: Colors.cyan),
                 // поменялся цвет фона, шрифт
                 underline: Container(
@@ -279,26 +280,26 @@ class MyFormState extends State {
                 }).toList(),
               ),
                 Padding(
-                  padding: EdgeInsets.all(4),
+                  padding: EdgeInsets.all(1),
                 ),
               Text(ruLocale == true ? "Коэффициент стабильности имплантанта (ISQ)" : "Implant Stability Quotient (ISQ)",
                 textAlign: TextAlign.center,
                 style:
-                  TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
+                  TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
                           // поменялся шрифт
               )),
               Text("$isq",
                 style: const TextStyle(
-                  fontSize: 13,
-                  fontFamily: 'RocknRollOne-Regular',
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                   color: Colors.cyan),
               ),
               Row(
                 children: [
                   Text("$isqMin",
                     style: TextStyle(
-                      fontSize: 11,
-                      fontFamily: 'RocknRollOne-Regular',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                       color: Colors.amberAccent),
                   ),
                   Expanded(
@@ -331,8 +332,8 @@ class MyFormState extends State {
                   )),
                   Text("$isqMax",
                     style: TextStyle(
-                      fontSize: 11,
-                      fontFamily: 'RocknRollOne-Regular',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                       color: Colors.amberAccent),
                   ),
                 ],
@@ -340,20 +341,20 @@ class MyFormState extends State {
               Text(ruLocale == true ? "Динамометрическое усилие, н/см2" : "Torque force, N / cm2",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 12,
-                    fontFamily: 'RocknRollOne-Regular')),
+                  fontSize: 14,
+                    fontWeight: FontWeight.bold)),
               Text("$force",
                 style: const TextStyle(
-                  fontSize: 13,
-                  fontFamily: 'RocknRollOne-Regular',
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                   color: Colors.cyan),
               ),
               Row(
                 children: [
                   Text("$forceMin",
                     style: TextStyle(
-                      fontSize: 11,
-                      fontFamily: 'RocknRollOne-Regular',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                       color: Colors.amberAccent),
                    ),
                   Expanded(child: SliderTheme(
@@ -375,17 +376,17 @@ class MyFormState extends State {
                   ),),
                   Text("$forceMax",
                     style: TextStyle(
-                      fontSize: 11,
-                      fontFamily: 'RocknRollOne-Regular',
+                        fontSize: 14,
+                      fontWeight: FontWeight.bold,
                       color: Colors.amberAccent),
                   ),],
               ),
                 Padding(
-                  padding: EdgeInsets.all(4),
+                  padding: EdgeInsets.all(1),
                 ),
               Text(ruLocale == true ? "Тип фиксации" : "Fixation type",
                   style:
-                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
@@ -394,8 +395,8 @@ class MyFormState extends State {
                 iconSize: 24,
                 elevation: 16,
                 style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                     color: Colors.cyan),
                 // поменялся цвет фона, шрифт
                 underline: Container(
@@ -415,11 +416,11 @@ class MyFormState extends State {
                 }).toList(),
               ),
                 Padding(
-                  padding: EdgeInsets.all(4),
+                  padding: EdgeInsets.all(1),
                 ),
               Text(ruLocale == true ? "Тип кости" : "Bone type",
                   style:
-                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
@@ -428,8 +429,8 @@ class MyFormState extends State {
                 iconSize: 24,
                 elevation: 16,
                 style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                     color: Colors.cyan),
                 // поменялся цвет фона, шрифт
                 underline: Container(
@@ -449,11 +450,11 @@ class MyFormState extends State {
                 }).toList(),
               ),
                 Padding(
-                  padding: EdgeInsets.all(4),
+                  padding: EdgeInsets.all(1),
                 ),
               Text(ruLocale == true ? "Класс резорбции" : "Resorption class",
                   style:
-                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
@@ -462,8 +463,8 @@ class MyFormState extends State {
                 iconSize: 24,
                 elevation: 16,
                 style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                     color: Colors.cyan),
                 // поменялся цвет фона, шрифт
                 underline: Container(
@@ -483,11 +484,11 @@ class MyFormState extends State {
                 }).toList(),
               ),
                 Padding(
-                  padding: EdgeInsets.all(4),
+                  padding: EdgeInsets.all(1),
                 ),
               Text(ruLocale == true ? "Угол вкручивания" : "Screw angle",
                   style:
-                      TextStyle(fontSize: 12, fontFamily: 'RocknRollOne-Regular'
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
                           // поменялся шрифт
                           )),
               DropdownButton<String>(
@@ -496,8 +497,8 @@ class MyFormState extends State {
                 iconSize: 24,
                 elevation: 16,
                 style: const TextStyle(
-                    fontSize: 11,
-                    fontFamily: 'RocknRollOne-Regular',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                     color: Colors.cyan),
                 // поменялся цвет фона, шрифт
                 underline: Container(

@@ -68,10 +68,6 @@ flutter:
     - assets/icons/
     - assets/icons/icons8.webp
 
-  fonts:
-    - family: RocknRollOne-Regular
-      fonts:
-        - asset: assets/fonts/RocknRoll_One/RocknRollOne-Regular.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
