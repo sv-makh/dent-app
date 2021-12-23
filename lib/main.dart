@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dentapp/result.dart';
 import 'package:dentapp/helpers/data.dart';
 import 'package:dentapp/helpers/data_post.dart';
 import 'package:dentapp/helpers/app_properties_bloc.dart';
@@ -219,34 +218,7 @@ class _MyAppState extends State<MyApp> {
       //а если были - строится форма MyForm()
       body: connection == false ? Container() : MyForm(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // поменялся цвет фона, шрифт
-      //если данные для построения формы не были получены
-      //кнопка "Рассчитать" не показывается
-      floatingActionButton: connection == false
-          ? Container()
-          : ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.amber)),
-              child: StreamBuilder<Object>(
-                stream: appBloc.titleButtonStream,
-                initialData: ruLocale == true ? "Рассчитать" : "Calculate",
-                builder: (context, snapshot) {
-                  return Text(snapshot.data.toString(),
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87));
-                },
-              ),
-              onPressed: () {
-                debugPrint("onPressed");
-                debugPrint(resultMap.toString());
-                //resultMap = _getResultMap();
-                _getDataPost(resultMap);
-                setState(() {
-                  txtController.text = result;
-                  txtControllerError.text = resultMessage;
-                });
-              },
-            ),
+
     ),
   );
 }}
@@ -317,33 +289,14 @@ class MyFormState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.only(left : 10.0, right : 10.0, top : 10.0, bottom: 50.0),
+    return Column(children: [Container(
+      height: MediaQuery.of(context).size.height - 130,
+        padding: const EdgeInsets.only(left : 10.0, right : 10.0, top : 10.0),//, bottom: 50.0),
         child: Form(
             key: _formKey,
             child: SingleChildScrollView(
               //прокрутка колонки
               child: Column(children: [
-              Row(
-                children: [
-                  Text("eng"),
-                  SizedBox(width: 5),
-                  SizedBox(width: 20,
-                    child:
-                      SwitchListTile(
-                      value: ruLocale,
-                      onChanged: (bool value) {
-                      setState(() {
-                        ruLocale = value;
-                        changeLocaleParameters();
-                        changeLocaleTitle();
-                      });
-                    },
-                    activeColor: Colors.grey,
-                  )),
-                  SizedBox(width: 20),
-                  Text("ru"),
-              ]),
               Text(ruLocale == true ? "Тип протезирования" : "Prosthetics type",
                   style:
                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
@@ -401,6 +354,7 @@ class MyFormState extends State {
                   Expanded(
                     child: SliderTheme(
                     data: SliderThemeData(
+                      overlayShape: RoundSliderOverlayShape(overlayRadius: 0),
                       activeTrackColor: Colors.amber,
                       inactiveTrackColor: Colors.amberAccent,
                       thumbColor: Colors.amber,
@@ -648,6 +602,61 @@ class MyFormState extends State {
                     : Container()
 
 
-            ]))));
+            ])
+            )
+        ),
+    ),
+      Expanded(
+      child: Row(children: [
+      ElevatedButton(
+        onPressed: ((){
+          debugPrint("onPressed");
+          debugPrint(resultMap.toString());
+          //resultMap = _getResultMap();
+          _getDataPost(resultMap);
+          setState(() {
+            txtController.text = result;
+            txtControllerError.text = resultMessage;
+          });
+        }),
+        child: Text(ruLocale == true ? "Рассчитать" : "Calculate",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)),
+        style: ElevatedButton.styleFrom(
+          primary: Colors.amber,
+          fixedSize: Size(120.0, 28.0)
+          //ButtonStyle(
+          //backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),
+        ),
+      ),
+      _langSwitch()
+      ],
+      mainAxisAlignment: MainAxisAlignment.spaceAround,),
+      )
+    ],
+    );
+  }
+
+  Widget _langSwitch() {
+    return Row(
+      children: [
+        Text("eng"),
+        SizedBox(width: 5),
+        SizedBox(width: 20,
+          child:
+            SwitchListTile(
+              value: ruLocale,
+              onChanged: (bool value) {
+                setState(() {
+                  ruLocale = value;
+                  changeLocaleParameters();
+                  changeLocaleTitle();
+                });
+              },
+              activeColor: Colors.grey,
+            )),
+        SizedBox(width: 20),
+        Text("ru"),
+      ]
+    );
   }
 }
