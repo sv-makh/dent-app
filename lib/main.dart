@@ -194,6 +194,8 @@ class MyForm extends StatefulWidget {
 class MyFormState extends State {
   final _formKey = GlobalKey<FormState>();
 
+  ScrollController _scrollController = ScrollController();
+
   void _getForceParameter(int isq) async {
     //значения для тестирования
     forceMin = 100 - isq;
@@ -289,6 +291,7 @@ class MyFormState extends State {
               key: _formKey,
               //прокрутка колонки
               child: SingleChildScrollView(
+                controller: _scrollController,
                 child: Column(children: [
                 Text(
                     ruLocale == true
@@ -341,7 +344,7 @@ class MyFormState extends State {
                       // поменялся шрифт
                     )),
                 Padding(
-                  padding: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(3),
                 ),
                 Text(
                   "$isq",
@@ -410,7 +413,7 @@ class MyFormState extends State {
                     style:
                         TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 Padding(
-                  padding: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(3),
                 ),
                 Text(
                   "$force",
@@ -653,10 +656,16 @@ class MyFormState extends State {
                   fontWeight: FontWeight.bold))
             ])
         ),
-        resultStatus == "error"
-            ? Container(
+        SizedBox(height: 2),
+        resultStatus == "error" ?
+            Container(
                 height: 38.0,
                 width: 300.0,
+                /*decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.deepOrangeAccent,
+                    width: 2.0)
+                ),*/
                 child: Text("$resultMsgTxt", style: TextStyle(fontSize: 14)))
             : Container()
       ],)
@@ -673,6 +682,10 @@ class MyFormState extends State {
             resultTxt = result;
             resultMsgTxt = resultMessage;
           });
+          _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease);
         });
       }),
       child: Text(ruLocale == true ? "Рассчитать" : "Calculate",
