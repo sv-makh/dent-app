@@ -25,15 +25,19 @@ var angleListEng = <String>[];
 //map, в которую собираются все выбранные пользователем параметры с формы
 var resultMap = Map<String, dynamic>();
 
-String resultStatus = "";
-
-//результат запроса на сервер со всеми параметрами формы
+//результат запроса post на сервер со всеми параметрами формы
+//число - Срок ортопедической нагрузки (в сутках)
 String result = "";
 
-//сообщение с сервера, пришедшее вместе с результатом
+//статус результата запроса post с сервера, error или ok
+String resultStatus = "";
+
+//сообщение с сервера после post, пришедшее вместе с результатом
+//с описанием некорректности присланных данных
+//или "Срок ортопедической нагрузки" если данные корректны
 String resultMessage = "";
 
-//данные, полученные от API в ответ на get запрос
+//экземпляр класса для взяимодействия с API get запросом
 DataFetch _dataFetch = DataFetch();
 
 //массив параметров формы с выпадающими списками
@@ -55,25 +59,32 @@ _getData(name) async {
   //}
 }
 
+//получение данных от API в ответ на запрос со всеми параметрами формы,
+//записанными в resultMap
 _getDataPost(resultMap) async {
-  debugPrint("_getDataPost 1)");
-  //данные, полученные от API в ответ на post запрос
+  //debugPrint("_getDataPost 1)");
+  //экземпляр класса для взяимодействия с API post запросом
   DataPost _dataPost = DataPost(resultMap);
-  debugPrint("_getDataPost 2)");
+  //debugPrint("_getDataPost 2)");
   try {
+    //данные, полученные от API в ответ на post запрос
     var dataDecoded = await _dataPost.getData();
     if (dataDecoded != null) {
-      debugPrint(jsonEncode(dataDecoded));
+      //debugPrint(jsonEncode(dataDecoded));
+      //разбор присланных данных
       resultStatus = dataDecoded["status"].toString();
       result = dataDecoded["result"].toString();
+      //resultMessage присылается на русском, поэтому нужно декодирование
       resultMessage = utf8.decode(dataDecoded["message"].runes.toList());
 
-      debugPrint(resultStatus);
-      debugPrint(result);
-      debugPrint(resultMessage);
-    } else
-      print("dataDecoded from post is null!");
+      //debugPrint(resultStatus);
+      //debugPrint(result);
+      //debugPrint(resultMessage);
+    } //else
+      //если данные == null , не делать ничего
+      //debugPrint("dataDecoded from post is null!");
   } catch (e) {
+    //если запрос был неудачный, не делать ничего
     debugPrint(e.toString());
   }
 }
@@ -81,7 +92,7 @@ _getDataPost(resultMap) async {
 //заполнение массивов терминов данными из API для определённого параметра name
 void updateData(data, name) {
   if (data != null) {
-    debugPrint(jsonEncode(data));
+    //debugPrint(jsonEncode(data));
 
     int length = data["values"].length;
 
@@ -122,18 +133,18 @@ Future _getParameters() async {
   }
 }
 
+//получение языка системы
 String defaultLocale = Platform.localeName;
+//переменная для хранения языка приложения
 bool ruLocale = true;
 
+//изменение title у AppBar приложения
 changeLocaleTitle() {
   appBloc.updateTitle(ruLocale == true ? "Стоматология" : "Stomatology");
 }
 
 //удалось ли получить данные с сервера
 bool connection = true;
-
-var txtController = TextEditingController();
-var txtControllerError = TextEditingController();
 
 void main() async {
   try {
@@ -145,6 +156,8 @@ void main() async {
     debugPrint(e.toString());
   }
 
+  //какой язык будет в приложении после запуска:
+  //русский, если язык системы русский, и английский в остальных случаях
   if (defaultLocale == "ru_RU")
     ruLocale = true;
   else
@@ -153,16 +166,11 @@ void main() async {
   runApp(MyApp());
 }
 
-/*class MyApp extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {*/
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         // поменялся цвет фона, шрифт, добавлена картинка
         appBar: AppBar(
@@ -171,6 +179,8 @@ class MyApp extends StatelessWidget {
           title: StreamBuilder<Object>(
               stream: appBloc.titleStream,
               initialData: ruLocale == true ? "Стоматология" : "Stomatology",
+              //необходимо для изменения title при изменении языка приложения
+              //по нажатию на switch, находящемуся в MyForm
               builder: (context, snapshot) {
                 return Text(snapshot.data.toString(),
                     style: TextStyle(
@@ -194,10 +204,13 @@ class MyForm extends StatefulWidget {
 class MyFormState extends State {
   final _formKey = GlobalKey<FormState>();
 
+  //для автоматического прокручивания страницы к результату расчета
+  //посленажатия кнопки Рассчитать
   ScrollController _scrollController = ScrollController();
 
+  //изменение прараметра force при изменении параметра isq
   void _getForceParameter(int isq) async {
-    //значения для тестирования
+    //====значения для тестирования====
     forceMin = 100 - isq;
     if (forceMin < 15) forceMin = 15;
     forceMax = 100;
@@ -206,6 +219,9 @@ class MyFormState extends State {
       forceMin = 15;
       force = 15;
     }
+    //==================================
+
+    //обращение к серверу за значениями параметра
     /*  try {
       var dataDecoded = await _dataFetch.getData("isq");
       if (dataDecoded != null) debugPrint(jsonEncode(dataDecoded));
@@ -216,14 +232,19 @@ class MyFormState extends State {
   }
 
   //минимальное и максимальное значения для слайдеров с параметрами isq и force
+  //цифры взяты из http://157.245.254.251:8000/docs#/ Schemas ModelInputParams
   int isqMin = 50;
   int isqMax = 100;
   int forceMin = 15;
   int forceMax = 100;
 
+  //начальные значения параметров формы - первые элементы соответствующих массивов
+  //массив с русскими или англ терминами выбирается в зависимости от
+  //текущего языка приложения
   String typeProt = (ruLocale == true
       ? typeProtListRu
       : typeProtListEng)[0]; //Тип протезирования / Prosthetics type
+  //начальные значения isq & force - минимальные возможные значения
   int isq =
       50; //Коэффициент стабильности имплантанта (ISQ) / Implant Stability Quotient(ISQ)
   int force = 15; //Динамометрическое усилие, н/см2 / Torque force, N/cm2
@@ -240,9 +261,13 @@ class MyFormState extends State {
       ? angleListRu
       : angleListEng)[0]; //Угол вкручивания / Screw angle
 
+  //строки для вывода результата запроса post на сервер со всеми
+  //выбранными параметрами
   String resultTxt = "";
   String resultMsgTxt = "";
 
+  //начальные значения параметров формы - первые элементы соответствующих массивов
+  //меняются при смене языка приложения
   void changeLocaleParameters() {
     typeProt = (ruLocale == true ? typeProtListRu : typeProtListEng)[0];
     typeFix = (ruLocale == true ? typeFixListRu : typeFixListEng)[0];
@@ -284,6 +309,7 @@ class MyFormState extends State {
               ),
             ],
           ),
+          //снизу, под Container находится кнопка Рассчитать и переключение языка
           height: MediaQuery.of(context).size.height - 130,
           padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
           //, bottom: 50.0),
@@ -311,13 +337,15 @@ class MyFormState extends State {
                       fontWeight: FontWeight.bold,
                       color: Colors.cyan),
                   // поменялся цвет фона, шрифт
-                  underline: Container(
-                    height: 2,
-                    color: Colors.cyan,
+                      underline: Container(
+                        height: 2,
+                        color: Colors.cyan,
                   ),
                   onChanged: (String? newValue) {
                     setState(() {
                       typeProt = newValue!;
+                      //запись в map выбранного значения для отправки на сервер:
+                      //отправляется id элемента, т.е. его порядковый номер
                       resultMap[parameters[0]] = 1 +
                           (ruLocale == true ? typeProtListRu : typeProtListEng)
                               .indexOf(typeProt);
@@ -346,6 +374,7 @@ class MyFormState extends State {
                 Padding(
                   padding: EdgeInsets.all(3),
                 ),
+                //вывод на форму выбранного значения
                 Text(
                   "$isq",
                   style: const TextStyle(
@@ -387,6 +416,8 @@ class MyFormState extends State {
                           setState(() {
                             isq = value.toInt();
                             _getForceParameter(isq);
+                            //запись в map выбранного значения для отправки на сервер:
+                            //отправляется значение
                             resultMap["isq"] = isq;
                             resultMap["force"] = force;
                           });
@@ -415,6 +446,7 @@ class MyFormState extends State {
                 Padding(
                   padding: EdgeInsets.all(3),
                 ),
+                //вывод на форму значения параметра
                 Text(
                   "$force",
                   style: const TextStyle(
@@ -445,6 +477,8 @@ class MyFormState extends State {
                             max: forceMax.toDouble(),
                             divisions: forceMax - forceMin,
                             label: force.round().toString(),
+                            //значение этого параметра отправляются на сервер
+                            //при измении параметра isq, в предыдущем слайдере
                             onChanged: (value) {
                               //setState(() => force = value.toInt());
                             }),
@@ -484,6 +518,8 @@ class MyFormState extends State {
                   onChanged: (String? newValue) {
                     setState(() {
                       typeFix = newValue!;
+                      //запись в map выбранного значения для отправки на сервер:
+                      //отправляется id элемента, т.е. его порядковый номер
                       //"type_fix"
                       resultMap[parameters[1]] = 1 +
                           (ruLocale == true ? typeFixListRu : typeFixListEng)
@@ -523,6 +559,8 @@ class MyFormState extends State {
                   onChanged: (String? newValue) {
                     setState(() {
                       typeBone = newValue!;
+                      //запись в map выбранного значения для отправки на сервер:
+                      //отправляется id элемента, т.е. его порядковый номер
                       //"type_bone"
                       resultMap[parameters[2]] = 1 +
                           (ruLocale == true ? typeBoneListRu : typeBoneListEng)
@@ -562,7 +600,10 @@ class MyFormState extends State {
                   onChanged: (String? newValue) {
                     setState(() {
                       classResorp = newValue!;
-                      //"class_resorp"
+                      //запись в map выбранного значения для отправки на сервер:
+                      //отправляется значение элемента
+                      //"class_resorb" - отличается от parameters[3], не опечатка
+                      //такой ключ у map ожидает сервер
                       resultMap["class_resorb"] = classResorp;
                     });
                   },
@@ -601,6 +642,8 @@ class MyFormState extends State {
                   onChanged: (String? newValue) {
                     setState(() {
                       angle = newValue!;
+                      //запись в map выбранного значения для отправки на сервер:
+                      //отправляется id элемента, т.е. его порядковый номер
                       //"angle"
                       resultMap[parameters[4]] = 1 +
                           (ruLocale == true ? angleListRu : angleListEng)
@@ -616,13 +659,16 @@ class MyFormState extends State {
                   }).toList(),
                 ),
                 SizedBox(height: 5),
+                //вывод результата запроса на сервер со всеми выбранными параметрами
                 _showResult()
               ]))),
         ),
         Expanded(
           child: Row(
             children: [
+              //кнопка Рассчитать
               _buttonCalculate(),
+              //switch для переключения языка приложения
               _langSwitch()
             ],
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -661,6 +707,7 @@ class MyFormState extends State {
             Container(
                 height: 38.0,
                 width: 300.0,
+
                 /*decoration: BoxDecoration(
                   border: Border.all(
                     color: Colors.deepOrangeAccent,
@@ -675,13 +722,14 @@ class MyFormState extends State {
   Widget _buttonCalculate() {
     return ElevatedButton(
       onPressed: (() {
-        debugPrint("onPressed");
-        debugPrint(resultMap.toString());
+        //debugPrint("onPressed");
+        //debugPrint(resultMap.toString());
         _getDataPost(resultMap).then((_) {
           setState(() {
             resultTxt = result;
             resultMsgTxt = resultMessage;
           });
+          //автоматическое прокручивание формы до конца, к результату
           _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
               duration: Duration(milliseconds: 500),
@@ -708,7 +756,9 @@ class MyFormState extends State {
             onChanged: (bool value) {
               setState(() {
                 ruLocale = value;
+                //смена значений параметров на первые элементы соответствующих массивов
                 changeLocaleParameters();
+                //смена title у appbar
                 changeLocaleTitle();
               });
             },

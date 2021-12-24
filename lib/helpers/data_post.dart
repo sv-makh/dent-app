@@ -14,6 +14,7 @@ class DataPost {
           'Content-Type': 'application/json',
         },
         body: jsonEncode(body),
+      //образец map для запроса
       /*body: jsonEncode(<String, String>{
         "type_prot": 2.toString(),
         "force": 15.toString(),
@@ -28,7 +29,7 @@ class DataPost {
       return jsonDecode(response.body);
     }
     else {
-      print("statusCode");
+      //print("statusCode");
       print(response.statusCode);
       return jsonDecode(response.body);
     }
