@@ -1,0 +1,11 @@
+{
+    "prostheticsType": "Тип протезирования",
+    "implantStabilityQuotient": "Коэффициент стабильности имплантанта(ISQ)",
+    "torqueForce": "Динамометрическое усилие, н / см2",
+    "fixationType": "Тип фиксации",
+    "boneType": "Тип кости",
+    "resorptionClass": "Класс резорбции",
+    "screwAngle": "Угол вкручивания",
+    "durationOfOrthopedicLoad": "Срок ортопедической нагрузки (в сутках)",
+    "calculate": "Рассчитать"
+}

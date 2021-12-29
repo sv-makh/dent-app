@@ -1,0 +1,11 @@
+{
+    "prostheticsType": "Prosthetics type",
+    "implantStabilityQuotient": "Implant Stability Quotient(ISQ)",
+    "torqueForce": "Torque force, N / cm2",
+    "fixationType": "Fixation type",
+    "boneType": "Bone type",
+    "resorptionClass": "Resorption class",
+    "screwAngle": "Screw angle",
+    "durationOfOrthopedicLoad": "Duration of orthopedic load (days)",
+    "calculate": "Calculate"
+}

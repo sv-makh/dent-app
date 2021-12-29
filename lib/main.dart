@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:dentapp/helpers/data.dart';
 import 'package:dentapp/helpers/data_post.dart';
 import 'package:dentapp/helpers/app_properties_bloc.dart';
@@ -163,35 +165,51 @@ void main() async {
   else
     ruLocale = false;
 
-  runApp(MyApp());
+  runApp(//MyApp());
+//}
+      MaterialApp(
+/*class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(*/
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en', ''),
+        Locale('ru', '')
+      ],
+      debugShowCheckedModeBanner: false,
+      home: MyApp(),
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        // поменялся цвет фона, шрифт, добавлена картинка
-        appBar: AppBar(
-          backgroundColor: Colors.white70,
-          leading: Image.asset("assets/icons/icons8.webp"),
-          title: StreamBuilder<Object>(
-              stream: appBloc.titleStream,
-              initialData: ruLocale == true ? "Стоматология" : "Stomatology",
-              //необходимо для изменения title при изменении языка приложения
-              //по нажатию на switch, находящемуся в MyForm
-              builder: (context, snapshot) {
-                return Text(snapshot.data.toString(),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black87));
-              }),
-          centerTitle: true,
-        ),
-        //если данные для построения формы не были получены, показывается пустой экран
-        //а если были - строится форма MyForm()
-        body: connection == false ? Container() : MyForm(),
+    return Scaffold(
+      // поменялся цвет фона, шрифт, добавлена картинка
+      appBar: AppBar(
+        backgroundColor: Colors.white70,
+        leading: Image.asset("assets/icons/icons8.webp"),
+        title: StreamBuilder<Object>(
+            stream: appBloc.titleStream,
+            initialData: ruLocale == true ? "Стоматология" : "Stomatology",
+            //необходимо для изменения title при изменении языка приложения
+            //по нажатию на switch, находящемуся в MyForm
+            builder: (context, snapshot) {
+              return Text(snapshot.data.toString(),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.black87));
+            }),
+        centerTitle: true,
       ),
+      //если данные для построения формы не были получены, показывается пустой экран
+      //а если были - строится форма MyForm()
+      body: connection == false ? Container() : MyForm(),
     );
   }
 }
@@ -319,10 +337,10 @@ class MyFormState extends State {
               child: SingleChildScrollView(
                 controller: _scrollController,
                 child: Column(children: [
-                Text(
-                    ruLocale == true
+                Text(AppLocalizations.of(context)!.prostheticsType,
+                    /*ruLocale == true
                         ? "Тип протезирования"
-                        : "Prosthetics type",
+                        : "Prosthetics type",*/
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
